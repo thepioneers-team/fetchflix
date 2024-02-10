@@ -3,20 +3,22 @@ import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
-// fake commit
-
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1300,
+    height: 850,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === "linux" ? { icon } : {}),
+    title: "Fetchflix",
+    icon: "../../resources/icon.png",
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
     },
   });
+
+  app.dock.setIcon(icon);
+  app.setName("Fetchflix");
 
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
