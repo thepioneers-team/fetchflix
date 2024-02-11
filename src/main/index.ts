@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
-import icon from "../../resources/icon.png?asset";
+// import icon from "../../resources/icon.png?asset";
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -16,9 +16,9 @@ function createWindow(): void {
       sandbox: false,
     },
   });
-
-  app.dock.setIcon(icon);
-  app.setName("Fetchflix");
+  // Not Working on Windows
+  // app.dock.setIcon(icon);
+  // app.setName("Fetchflix");
 
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
