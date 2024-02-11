@@ -1,4 +1,3 @@
-import React from "react";
 import { IoMdKey } from "react-icons/io";
 import { FaCookieBite } from "react-icons/fa";
 import { Divider } from "@nextui-org/react";
