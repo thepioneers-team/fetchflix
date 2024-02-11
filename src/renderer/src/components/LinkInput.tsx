@@ -1,0 +1,46 @@
+import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
+import { MdOutlineFileDownload } from "react-icons/md";
+import { useCallback, useState } from "react";
+import QualitySelector from "./QualitySelector";
+import Credentials from "./Credentials";
+import { Button } from "@nextui-org/react";
+
+const LinkInput = () => {
+  const [turboMode, setTurboMode] = useState(false);
+  const [link, setLink] = useState("");
+  const handleTurboClick = useCallback(() => {
+    setTurboMode((current) => {
+      // tell the electron process
+      return !current;
+    });
+  }, []);
+  return (
+    <div className="inline-flex min-h-16 min-w-[1000px] items-center gap-2 rounded-xl border-[1px] border-white/20 bg-zinc-900/70 px-2 backdrop-blur-lg">
+      <div
+        onClick={handleTurboClick}
+        className="cursor-pointer text-3xl text-primary"
+      >
+        {turboMode ? <HiLightningBolt /> : <HiOutlineLightningBolt />}
+      </div>
+      <input
+        value={link}
+        onChange={(e) => {
+          setLink(e.target.value);
+        }}
+        placeholder="Please enter a url and press enter!"
+        type="text"
+        className="h-16 flex-grow border-none bg-transparent px-2 font-roboto outline-none"
+      />
+      <Credentials />
+      <QualitySelector />
+      <Button
+        isIconOnly
+        className="max-w-8 cursor-pointer rounded-xl bg-zinc-800 p-2 text-3xl text-primary transition-all hover:bg-zinc-800/40 "
+      >
+        <MdOutlineFileDownload />
+      </Button>
+    </div>
+  );
+};
+
+export default LinkInput;

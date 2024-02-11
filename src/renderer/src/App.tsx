@@ -1,12 +1,11 @@
-import { Button } from "@nextui-org/react";
-
+import LinkInput from "./components/LinkInput";
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send("ping");
+  // const ipcHandle = (): void => window.electron.ipcRenderer.send("ping");
 
   return (
     <>
       <h3 className="text-lg text-red-500">hello</h3>
-      <Button color="primary">Hello</Button>
+      <LinkInput />
     </>
   );
 }
