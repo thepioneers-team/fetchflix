@@ -32,7 +32,7 @@ function MacOSDisplay({ onMinimize, onQuit }: Params) {
 
 function WindowsDisplay({ onMinimize, onQuit }: Params) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 ">
       <FiMinus className="h-4.5 w-4.5" onClick={onMinimize} />
       <IoMdClose className="h-4.5 w-4.5" onClick={onQuit} />
     </div>
@@ -63,11 +63,13 @@ const Topbar = () => {
     >
       {os !== "darwin" ? (
         <>
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-medium">Fetchflix</h3>
-            <FaGithub className="h-4 w-4" />
-          </div>
           <WindowsDisplay onMinimize={handleMinimize} onQuit={handleQuit} />
+          <div className="no-drag flex items-center gap-2">
+            <h3 className="text-sm font-medium">Fetchflix</h3>
+            <ExternalURL className="cursor-pointer" href={config.github}>
+              <FaGithub className="h-4 w-4" />
+            </ExternalURL>
+          </div>
         </>
       ) : (
         <>
