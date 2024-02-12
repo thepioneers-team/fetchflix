@@ -1,6 +1,6 @@
 const QualitySelector = () => {
   return (
-    <div className=" cursor-pointer font-roboto text-lg text-primary">Best</div>
+    <div className=" text- cursor-pointer font-roboto text-primary">Best</div>
   );
 };
 

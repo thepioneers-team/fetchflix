@@ -4,7 +4,6 @@ function App(): JSX.Element {
 
   return (
     <>
-      <h3 className="text-lg text-red-500">hello</h3>
       <LinkInput />
     </>
   );

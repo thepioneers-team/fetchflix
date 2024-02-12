@@ -1,13 +1,14 @@
 import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
-// import icon from "../../resources/icon.png?asset";
+import icon from "../../resources/icon.png?asset";
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1300,
     height: 850,
     show: false,
+    frame: false,
     autoHideMenuBar: true,
     title: "Fetchflix",
     icon: "../../resources/icon.png",
@@ -16,9 +17,13 @@ function createWindow(): void {
       sandbox: false,
     },
   });
-  // Not Working on Windows
-  // app.dock.setIcon(icon);
-  // app.setName("Fetchflix");
+
+  if (process.platform === "darwin") {
+    app.dock.setIcon(icon);
+    app.setName("Fetchflix");
+  }
+
+  mainWindow.setMenuBarVisibility(false); // turn off later
 
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
@@ -34,6 +39,19 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
+
+  // event listeners
+  ipcMain.handle("get/os", () => {
+    return process.platform;
+  });
+
+  ipcMain.handle("minimize", () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.handle("quit", () => {
+    app.quit();
+  });
 }
 
 app.whenReady().then(() => {

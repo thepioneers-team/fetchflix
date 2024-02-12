@@ -9,7 +9,7 @@ const Credentials = () => {
       </div>
       <Divider orientation="vertical" />
       <div>
-        <FaCookieBite />
+        <FaCookieBite className="h-4 w-4" />
       </div>
     </div>
   );
