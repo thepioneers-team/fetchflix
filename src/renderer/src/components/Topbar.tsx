@@ -57,7 +57,7 @@ const Topbar = () => {
   return (
     <div
       className={cn(
-        "drag absolute left-0 top-0 z-50 flex h-10 w-full items-center justify-between border-b border-[#353535] bg-[#1f1f1f96] p-2 px-3 text-foreground-50",
+        "drag absolute left-0 top-0 z-50 flex h-10 w-full select-none items-center justify-between border-b border-[#353535] bg-[#1f1f1f96] p-2 px-3 text-foreground-50",
         { "flex-row-reverse": os !== "darwin" },
       )}
     >
