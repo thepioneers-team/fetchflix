@@ -12,6 +12,7 @@ export const api = {
   app: {
     minimize: () => ipcRenderer.invoke("minimize"),
     quit: () => ipcRenderer.invoke("quit"),
+    openExternalURL: (url) => ipcRenderer.invoke("open-external-url", url),
   },
 };
 

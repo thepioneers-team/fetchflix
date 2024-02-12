@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import { FiMinus } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
+import ExternalURL from "./ExternalURL";
+import { config } from "@renderer/config/general";
 
 interface Params {
   onMinimize: () => void;
@@ -70,9 +72,11 @@ const Topbar = () => {
       ) : (
         <>
           <MacOSDisplay onMinimize={handleMinimize} onQuit={handleQuit} />
-          <div className="flex items-center gap-2">
+          <div className="no-drag flex items-center gap-2">
             <h3 className="text-sm font-medium">Fetchflix</h3>
-            <FaGithub className="h-4 w-4" />
+            <ExternalURL className="cursor-pointer" href={config.github}>
+              <FaGithub className="h-4 w-4" />
+            </ExternalURL>
           </div>
         </>
       )}

@@ -52,6 +52,10 @@ function createWindow(): void {
   ipcMain.handle("quit", () => {
     app.quit();
   });
+
+  ipcMain.handle("open-external-url", (_, url) => {
+    shell.openExternal(url);
+  });
 }
 
 app.whenReady().then(() => {
