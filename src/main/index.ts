@@ -62,6 +62,7 @@ function createWindow(): void {
       properties: ["openDirectory"],
     });
 
+    // TODO: check config file and see if there already a pre-set setting if not then revert to this :)
     if (result.canceled)
       return {
         relativePath: path.relative(
