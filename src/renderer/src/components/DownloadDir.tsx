@@ -1,5 +1,5 @@
 import { Button } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 
 const DownloadDir = () => {
@@ -8,8 +8,24 @@ const DownloadDir = () => {
   const handleDirChange = async () => {
     const data = await window.api.app.changeDirectory();
     setDownloadDir(data.relativePath);
-    window.localStorage.setItem("downloadDir", data.absolutePath);
+    window.localStorage.setItem(
+      "downloadDir",
+      JSON.stringify({
+        relativePath: data.relativePath,
+        absolutePath: data.absolutePath,
+      }),
+    );
   };
+
+  useEffect(() => {
+    const downloadDir = localStorage.getItem("downloadDir");
+
+    if (downloadDir) {
+      const parsed = JSON.parse(downloadDir);
+
+      setDownloadDir(parsed.relativePath);
+    }
+  }, []);
 
   return (
     <div>
