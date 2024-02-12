@@ -13,6 +13,7 @@ export const api = {
     minimize: () => ipcRenderer.invoke("minimize"),
     quit: () => ipcRenderer.invoke("quit"),
     openExternalURL: (url) => ipcRenderer.invoke("open-external-url", url),
+    changeDirectory: () => ipcRenderer.invoke("change-directory"),
   },
 };
 

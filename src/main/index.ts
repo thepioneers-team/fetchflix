@@ -1,5 +1,5 @@
-import { app, shell, BrowserWindow, ipcMain } from "electron";
-import { join } from "path";
+import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
+import path, { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
@@ -55,6 +55,26 @@ function createWindow(): void {
 
   ipcMain.handle("open-external-url", (_, url) => {
     shell.openExternal(url);
+  });
+
+  ipcMain.handle("change-directory", async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
+    });
+
+    if (result.canceled)
+      return {
+        relativePath: path.relative(
+          app.getPath("home"),
+          app.getPath("downloads"),
+        ),
+        absolutePath: app.getPath("downloads"),
+      };
+
+    return {
+      relativePath: path.relative(app.getPath("home"), result.filePaths[0]),
+      absolutePath: result.filePaths[0],
+    };
   });
 }
 
