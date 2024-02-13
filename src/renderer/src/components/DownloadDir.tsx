@@ -31,7 +31,7 @@ const DownloadDir = () => {
     <div>
       <Button
         onClick={handleDirChange}
-        className="cursor-pointer rounded-xl bg-zinc-800 p-2 px-4 text-primary transition-all hover:bg-zinc-800/40 "
+        className="nextui-button-text cursor-pointer rounded-xl bg-zinc-800 p-2 px-4 text-primary transition-all hover:bg-zinc-800/40 "
       >
         <span>{downloadDir}</span>
         <FaFolder />

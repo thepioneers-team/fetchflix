@@ -15,3 +15,7 @@ body {
 .no-drag {
   -webkit-app-region: no-drag;
 }
+
+.nextui-button-text {
+  z-index: var(--nextui-zIndices-2);
+}
