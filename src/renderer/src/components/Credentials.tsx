@@ -1,17 +1,18 @@
-import { IoMdKey } from "react-icons/io";
-import { FaCookieBite } from "react-icons/fa";
 import {
-  Divider,
-  ButtonGroup,
-  Input,
   Button,
+  ButtonGroup,
+  Divider,
+  Input,
   Popover,
-  PopoverTrigger,
   PopoverContent,
+  PopoverTrigger,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { FaCookieBite } from "react-icons/fa";
+import { IoMdKey } from "react-icons/io";
 const Credentials = () => {
   const [userpass, setUserpass] = useState({ username: "", password: "" });
+
   useEffect(() => {
     // send data to main process
   }, [userpass]);
@@ -26,18 +27,23 @@ const Credentials = () => {
         </PopoverTrigger>
         <PopoverContent className="text-white dark">
           <div className="flex max-w-72 flex-col gap-2 px-1 py-2">
-            <h1>
-              If you want to login in order to download the link fill the form
-              below
-            </h1>
+            <p className="mb-2 text-xs">
+              If you need to pass a username and/or password to access the link,
+              you can enter that here
+            </p>
             <Input
+              className="h-14"
               value={userpass.username}
               onChange={(e) => {
-                setUserpass((prev) => ({ ...prev, username: e.target.value }));
+                setUserpass((prev) => ({
+                  ...prev,
+                  username: e.target.value,
+                }));
               }}
               label="Username"
             />
             <Input
+              className="h-14"
               value={userpass.password}
               onChange={(e) => {
                 setUserpass((prev) => ({ ...prev, password: e.target.value }));
@@ -85,7 +91,7 @@ const Credentials = () => {
                 </Button>
               </ButtonGroup>
             </div>
-            <p>OR</p>
+            <p className="mt-2">OR</p>
             <div>
               <Button variant="light" className="text-primary">
                 Import Cookie.txt
