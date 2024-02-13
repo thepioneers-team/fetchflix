@@ -14,7 +14,7 @@ const Credentials = () => {
   const [userpass, setUserpass] = useState({ username: "", password: "" });
 
   useEffect(() => {
-    // send data to main process
+    // send data to main process.
   }, [userpass]);
 
   return (
