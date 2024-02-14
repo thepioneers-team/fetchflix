@@ -7,15 +7,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaCookieBite } from "react-icons/fa";
 import { IoMdKey } from "react-icons/io";
+
+import { browserCookie } from "@renderer/types/Credentials";
+
 const Credentials = () => {
   const [userpass, setUserpass] = useState({ username: "", password: "" });
-
+  const [cookies, setCookies] = useState<browserCookie>("brave");
   useEffect(() => {
     // send data to main process.
   }, [userpass]);
+
+  const handleImportCookie = async () => {
+    const data = await window.api.app.selectCookie();
+    console.log(data);
+  };
 
   return (
     <div className="flex h-7 items-center gap-2 rounded-full bg-zinc-800 px-2 py-1 font-roboto text-xl">
@@ -74,18 +82,129 @@ const Credentials = () => {
             <h1>Select Cookie Option:</h1>
             <div>
               <ButtonGroup>
-                <Button>Firefox</Button>
-                <Button>Chrome</Button>
-                <Button>Brave</Button>
-                <Button>Vivaldi</Button>
-                <Button>Safari</Button>
-                <Button>Chromium</Button>
-                <Button>Edge</Button>
-                <Button>Opera</Button>
                 <Button
-                  color="primary"
-                  className="text-zinc-900"
-                  value={"none"}
+                  onClick={() => {
+                    setCookies("firefox");
+                  }}
+                  {...(cookies === "firefox"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "firefox",
+                      }
+                    : {})}
+                >
+                  Firefox
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("chrome");
+                  }}
+                  {...(cookies === "chrome"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "chrome",
+                      }
+                    : {})}
+                >
+                  Chrome
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("brave");
+                  }}
+                  {...(cookies === "brave"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "brave",
+                      }
+                    : {})}
+                >
+                  Brave
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("vivaldi");
+                  }}
+                  {...(cookies === "vivaldi"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "vivaldi",
+                      }
+                    : {})}
+                >
+                  Vivaldi
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("safari");
+                  }}
+                  {...(cookies === "safari"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "safari",
+                      }
+                    : {})}
+                >
+                  Safari
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("chromium");
+                  }}
+                  {...(cookies === "chromium"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "chromium",
+                      }
+                    : {})}
+                >
+                  Chromium
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("edge");
+                  }}
+                  {...(cookies === "edge"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "edge",
+                      }
+                    : {})}
+                >
+                  Edge
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("opera");
+                  }}
+                  {...(cookies === "opera"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "opera",
+                      }
+                    : {})}
+                >
+                  Opera
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCookies("none");
+                  }}
+                  {...(cookies === "none"
+                    ? {
+                        color: "primary",
+                        className: "text-zinc-900",
+                        value: "none",
+                      }
+                    : {})}
                 >
                   None
                 </Button>
@@ -93,7 +212,11 @@ const Credentials = () => {
             </div>
             <p className="mt-2">OR</p>
             <div>
-              <Button variant="light" className="text-primary">
+              <Button
+                onClick={handleImportCookie}
+                variant="light"
+                className="text-primary"
+              >
                 Import Cookie.txt
               </Button>
             </div>

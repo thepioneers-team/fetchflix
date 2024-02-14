@@ -14,6 +14,7 @@ export const api = {
     quit: () => ipcRenderer.invoke("quit"),
     openExternalURL: (url) => ipcRenderer.invoke("open-external-url", url),
     changeDirectory: () => ipcRenderer.invoke("change-directory"),
+    selectCookie: () => ipcRenderer.invoke("open-cookies"),
   },
 };
 
