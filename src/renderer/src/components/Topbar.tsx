@@ -33,8 +33,14 @@ function MacOSDisplay({ onMinimize, onQuit }: Params) {
 function WindowsDisplay({ onMinimize, onQuit }: Params) {
   return (
     <div className="flex items-center gap-2 ">
-      <FiMinus className="h-4.5 w-4.5" onClick={onMinimize} />
-      <IoMdClose className="h-4.5 w-4.5" onClick={onQuit} />
+      <FiMinus
+        className="no-drag h-4.5 w-4.5 cursor-pointer"
+        onClick={onMinimize}
+      />
+      <IoMdClose
+        className="no-drag h-4.5 w-4.5 cursor-pointer"
+        onClick={onQuit}
+      />
     </div>
   );
 }
