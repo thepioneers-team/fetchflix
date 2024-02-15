@@ -8,5 +8,13 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["Fetchflix", "Topbar"]
+  "cSpell.words": [
+    "BESTAUDIO",
+    "BESTVIDEO",
+    "Fetchflix",
+    "FLAC",
+    "Topbar",
+    "VORBIS",
+    "WEBM"
+  ]
 }
