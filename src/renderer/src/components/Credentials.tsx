@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@nextui-org/react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCookieBite } from "react-icons/fa";
 import { IoMdKey } from "react-icons/io";
 
