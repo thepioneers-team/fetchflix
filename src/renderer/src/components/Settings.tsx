@@ -22,7 +22,7 @@ export default function Settings() {
         <IoSettingsOutline className="h-4 w-4" />
       </Button>
       <Modal
-        backdrop="opaque"
+        backdrop="blur"
         isOpen={isOpen}
         classNames={{
           body: "py-6",
