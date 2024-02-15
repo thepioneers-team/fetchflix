@@ -81,6 +81,12 @@ function createWindow(): void {
   ipcMain.handle("open-cookies", async () => {
     const result = await dialog.showOpenDialog({
       properties: ["openFile"],
+      filters: [
+        {
+          extensions: ["txt"],
+          name: "Files",
+        },
+      ],
     });
 
     // TODO: cookie validation & store it

@@ -8,12 +8,14 @@ import { Button } from "@nextui-org/react";
 const LinkInput = () => {
   const [turboMode, setTurboMode] = useState(false);
   const [link, setLink] = useState("");
+
   const handleTurboClick = useCallback(() => {
     setTurboMode((current) => {
       // tell the electron process
       return !current;
     });
   }, []);
+
   return (
     <div className="inline-flex min-h-16 min-w-[1000px] items-center gap-2 rounded-xl border-[1px] border-white/20 bg-zinc-900/70 px-2 backdrop-blur-lg">
       <div

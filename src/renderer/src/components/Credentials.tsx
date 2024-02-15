@@ -14,11 +14,15 @@ import { IoMdKey } from "react-icons/io";
 import { browserCookie } from "@renderer/types/Credentials";
 
 const Credentials = () => {
-  const [userpass, setUserpass] = useState({ username: "", password: "" });
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
   const [cookies, setCookies] = useState<browserCookie>("brave");
+
   useEffect(() => {
     // send data to main process.
-  }, [userpass]);
+  }, [credentials]);
 
   const handleImportCookie = async () => {
     const data = await window.api.app.selectCookie();
@@ -41,9 +45,9 @@ const Credentials = () => {
             </p>
             <Input
               className="h-14"
-              value={userpass.username}
+              value={credentials.username}
               onChange={(e) => {
-                setUserpass((prev) => ({
+                setCredentials((prev) => ({
                   ...prev,
                   username: e.target.value,
                 }));
@@ -52,15 +56,18 @@ const Credentials = () => {
             />
             <Input
               className="h-14"
-              value={userpass.password}
+              value={credentials.password}
               onChange={(e) => {
-                setUserpass((prev) => ({ ...prev, password: e.target.value }));
+                setCredentials((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }));
               }}
               label="Password"
             />
             <Button
               onClick={() => {
-                setUserpass({ password: "", username: "" });
+                setCredentials({ password: "", username: "" });
               }}
               className="w-full text-primary"
               variant="light"

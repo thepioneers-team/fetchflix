@@ -22,7 +22,7 @@ export default function Settings() {
         <IoSettingsOutline className="h-4 w-4" />
       </Button>
       <Modal
-        backdrop="opaque"
+        backdrop="blur"
         isOpen={isOpen}
         classNames={{
           body: "py-6",
@@ -63,11 +63,12 @@ export default function Settings() {
                 <p>add tabs</p>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
+                <Button
+                  color="primary"
+                  className="bg-primary/80 font-medium"
+                  onPress={onClose}
+                >
+                  Looks good, save it!
                 </Button>
               </ModalFooter>
             </>
