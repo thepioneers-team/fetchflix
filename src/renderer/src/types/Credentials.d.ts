@@ -7,4 +7,5 @@ export type browserCookie =
   | "chromium"
   | "edge"
   | "opera"
-  | "none";
+  | "none"
+  | "custom";

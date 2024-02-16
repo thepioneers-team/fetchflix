@@ -1,11 +1,13 @@
 import {
   Button,
   ButtonGroup,
+  Code,
   Divider,
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  cn,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { FaCookieBite } from "react-icons/fa";
@@ -21,12 +23,23 @@ const Credentials = () => {
   const [cookies, setCookies] = useState<browserCookie>("brave");
 
   useEffect(() => {
-    // send data to main process.
-  }, [credentials]);
+    localStorage.setItem("credentials", JSON.stringify(credentials));
+    localStorage.setItem("cookies", cookies);
+  }, [credentials, cookies]);
 
   const handleImportCookie = async () => {
+    if (cookies === "custom") {
+      setCookies("none");
+      return localStorage.removeItem("cookiePath");
+    }
     const data = await window.api.app.selectCookie();
-    console.log(data);
+    if (data.canceled) {
+      setCookies("none");
+      localStorage.removeItem("cookiePath");
+    } else {
+      setCookies("custom");
+      localStorage.setItem("cookiePath", data.filePaths[0]);
+    }
   };
 
   return (
@@ -221,12 +234,22 @@ const Credentials = () => {
             <div>
               <Button
                 onClick={handleImportCookie}
-                variant="light"
-                className="text-primary"
+                variant={cookies === "custom" ? "solid" : "light"}
+                color="primary"
+                className={cn(
+                  "text-primary",
+                  cookies === "custom" && "text-zinc-900",
+                )}
+                disabled={!(cookies == "custom" || cookies == "none")}
               >
-                Import Cookie.txt
+                {cookies === "custom"
+                  ? "Remove Cookie.txt"
+                  : "Import Cookie.txt"}
               </Button>
             </div>
+            {cookies === "custom" && (
+              <Code>{localStorage.getItem("cookiePath")}</Code>
+            )}
           </div>
         </PopoverContent>
       </Popover>
