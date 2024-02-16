@@ -20,7 +20,7 @@ const Credentials = () => {
     username: "",
     password: "",
   });
-  const [cookies, setCookies] = useState<browserCookie>("brave");
+  const [cookies, setCookies] = useState<browserCookie>("none");
 
   useEffect(() => {
     localStorage.setItem("credentials", JSON.stringify(credentials));

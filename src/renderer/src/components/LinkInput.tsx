@@ -15,6 +15,11 @@ const LinkInput = () => {
       return !current;
     });
   }, []);
+  const handleDownload = () => {
+    console.log(localStorage.getItem("credentials"));
+    console.log(localStorage.getItem("cookiePath"));
+    console.log(localStorage.getItem("cookies"));
+  };
 
   return (
     <div className="inline-flex min-h-16 min-w-[1000px] items-center gap-2 rounded-xl border-[1px] border-white/20 bg-zinc-900/70 px-2 backdrop-blur-lg">
@@ -36,6 +41,7 @@ const LinkInput = () => {
       <Credentials />
       <QualitySelector />
       <Button
+        onClick={handleDownload}
         isIconOnly
         className="max-w-8 cursor-pointer rounded-xl bg-zinc-800 p-2 text-3xl text-primary transition-all hover:bg-zinc-800/40 "
       >

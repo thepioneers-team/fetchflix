@@ -31,10 +31,10 @@ const QualitySelector = () => {
         </PopoverTrigger>
         <PopoverContent className="text-white dark">
           <div className="flex max-w-[450px] flex-wrap gap-2 p-3">
-            {FORMATS.map((format) => (
+            {FORMATS.map((format, idx) => (
               <>
                 {format.separator ? (
-                  <Divider className="my-2" />
+                  <Divider key={`qs-${idx}`} className="my-2" />
                 ) : (
                   <div
                     onClick={() => handleValueChange(format.value as string)}
