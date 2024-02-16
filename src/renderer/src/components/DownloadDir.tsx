@@ -1,9 +1,10 @@
 import { Button } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useDownloadDir } from "@renderer/stores/downloads";
+import { useEffect } from "react";
 import { FaFolder } from "react-icons/fa";
 
 const DownloadDir = () => {
-  const [downloadDir, setDownloadDir] = useState<string>("~/Downloads");
+  const { downloadDir, setDownloadDir } = useDownloadDir();
 
   const handleDirChange = async () => {
     const data = await window.api.app.changeDirectory();
