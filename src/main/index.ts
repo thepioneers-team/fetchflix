@@ -92,6 +92,10 @@ function createWindow(): void {
     // TODO: cookie validation & store it
     return result;
   });
+
+  ipcMain.handle("start-download", (_, args) => {
+    console.log(args);
+  });
 }
 
 app.whenReady().then(() => {

@@ -1,20 +1,16 @@
-import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
-import { MdOutlineFileDownload } from "react-icons/md";
-import { useCallback, useState } from "react";
-import QualitySelector from "./QualitySelector";
-import Credentials from "./Credentials";
 import { Button } from "@nextui-org/react";
 import { useCookies, useCredentials } from "@renderer/stores/credentials";
 import { linkRegex } from "@renderer/utils/constants";
+import { useCallback, useState } from "react";
+import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
+import { MdOutlineFileDownload } from "react-icons/md";
+import Credentials from "./Credentials";
+import QualitySelector from "./QualitySelector";
 const LinkInput = () => {
   const [turboMode, setTurboMode] = useState(false);
   const [link, setLink] = useState("");
   const { credentials } = useCredentials();
   const { cookiePath, cookies } = useCookies();
-
-  // useEffect(()=>{
-  //   // turbo mod
-  // },[link])
 
   const handleTurboClick = useCallback(() => {
     setTurboMode((current) => {
@@ -22,6 +18,7 @@ const LinkInput = () => {
       return !current;
     });
   }, []);
+
   const handleDownload = () => {
     console.log(credentials);
     console.log(cookiePath, cookies);
