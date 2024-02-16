@@ -38,7 +38,6 @@ const Credentials = () => {
       localStorage.removeItem("cookiePath");
     } else {
       setCookies("custom");
-      localStorage.setItem("cookieType", cookies);
       localStorage.setItem("cookiePath", data.filePaths[0]);
     }
   };
