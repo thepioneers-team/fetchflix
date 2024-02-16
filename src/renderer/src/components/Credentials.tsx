@@ -9,36 +9,28 @@ import {
   PopoverTrigger,
   cn,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+
 import { FaCookieBite } from "react-icons/fa";
 import { IoMdKey } from "react-icons/io";
 
-import { browserCookie } from "@renderer/types/Credentials";
+import { useCookies, useCredentials } from "@renderer/stores/credentials";
+
+import { Credentials } from "@renderer/types/Credentials";
 
 const Credentials = () => {
-  const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
-  });
-  const [cookies, setCookies] = useState<browserCookie>("none");
-
-  useEffect(() => {
-    localStorage.setItem("credentials", JSON.stringify(credentials));
-    localStorage.setItem("cookies", cookies);
-  }, [credentials, cookies]);
+  const { credentials, setPassword, setUsername, setCredentials } =
+    useCredentials();
+  const { cookies, setCookies } = useCookies();
 
   const handleImportCookie = async () => {
     if (cookies === "custom") {
       setCookies("none");
-      return localStorage.removeItem("cookiePath");
     }
     const data = await window.api.app.selectCookie();
     if (data.canceled) {
       setCookies("none");
-      localStorage.removeItem("cookiePath");
     } else {
       setCookies("custom");
-      localStorage.setItem("cookiePath", data.filePaths[0]);
     }
   };
 
@@ -60,22 +52,14 @@ const Credentials = () => {
               className="h-14"
               value={credentials.username}
               onChange={(e) => {
-                setCredentials((prev) => ({
-                  ...prev,
-                  username: e.target.value,
-                }));
+                setUsername(e.target.value);
               }}
               label="Username"
             />
             <Input
               className="h-14"
               value={credentials.password}
-              onChange={(e) => {
-                setCredentials((prev) => ({
-                  ...prev,
-                  password: e.target.value,
-                }));
-              }}
+              onChange={(e) => setPassword(e.target.value)}
               label="Password"
             />
             <Button
