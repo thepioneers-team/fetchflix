@@ -4,10 +4,13 @@ import { useCallback, useState } from "react";
 import QualitySelector from "./QualitySelector";
 import Credentials from "./Credentials";
 import { Button } from "@nextui-org/react";
+import { useCookies, useCredentials } from "@renderer/stores/credentials";
 
 const LinkInput = () => {
   const [turboMode, setTurboMode] = useState(false);
   const [link, setLink] = useState("");
+  const { credentials } = useCredentials();
+  const { cookiePath, cookies } = useCookies();
 
   const handleTurboClick = useCallback(() => {
     setTurboMode((current) => {
@@ -16,9 +19,8 @@ const LinkInput = () => {
     });
   }, []);
   const handleDownload = () => {
-    console.log(localStorage.getItem("credentials"));
-    console.log(localStorage.getItem("cookiePath"));
-    console.log(localStorage.getItem("cookies"));
+    console.log(credentials);
+    console.log(cookiePath, cookies);
   };
 
   return (
