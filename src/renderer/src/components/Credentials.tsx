@@ -15,22 +15,23 @@ import { IoMdKey } from "react-icons/io";
 
 import { useCookies, useCredentials } from "@renderer/stores/credentials";
 
-import { Credentials } from "@renderer/types/Credentials";
-
 const Credentials = () => {
   const { credentials, setPassword, setUsername, setCredentials } =
     useCredentials();
-  const { cookies, setCookies } = useCookies();
+  const { cookies, setCookies, setCookiePath } = useCookies();
 
   const handleImportCookie = async () => {
     if (cookies === "custom") {
       setCookies("none");
+      setCookiePath("");
     }
     const data = await window.api.app.selectCookie();
     if (data.canceled) {
       setCookies("none");
+      setCookiePath("");
     } else {
       setCookies("custom");
+      setCookiePath(data.filePaths[0]);
     }
   };
 

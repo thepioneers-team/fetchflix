@@ -24,5 +24,7 @@ export const useCredentials = create<IuseCredentials>((set) => ({
 
 export const useCookies = create<IuseCookies>((set) => ({
   cookies: "none",
+  cookiePath: "",
   setCookies: (cookies: browserCookie) => set((_) => ({ cookies: cookies })),
+  setCookiePath: (path: string) => set((_) => ({ cookiePath: path })),
 }));

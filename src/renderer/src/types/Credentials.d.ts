@@ -24,5 +24,7 @@ export interface IuseCredentials {
 
 export interface IuseCookies {
   cookies: browserCookie;
+  cookiePath: string;
   setCookies: (cookies: browserCookie) => void;
+  setCookiePath: (path: string) => void;
 }
