@@ -1,81 +1,126 @@
-import React from "react";
 import {
+  Button,
+  CircularProgress,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Table,
-  TableHeader,
-  TableColumn,
   TableBody,
-  TableRow,
   TableCell,
-  User,
-  Chip,
-  Tooltip,
-  getKeyValue,
+  TableColumn,
+  TableHeader,
+  TableRow,
 } from "@nextui-org/react";
-import { columns, users } from "./data";
+import React from "react";
+import { columns, downloadsMock } from "./data";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
-import { FaEye, FaTrash } from "react-icons/fa";
-import { IoPencil } from "react-icons/io5";
+import { IoMdClose } from "react-icons/io";
+import { FaTrash } from "react-icons/fa";
+import {
+  IoCopyOutline,
+  IoFolderOpenOutline,
+  IoOpenOutline,
+  IoTerminalOutline,
+} from "react-icons/io5";
 
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
+const iconClasses = "w-4 h-4 pointer-events-none flex-shrink-0";
 
 export default function DownloadTable() {
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((item, columnKey) => {
+    const cellValue = item[columnKey];
+
+    const isSuccess = item.status === "FINISHED";
+    const isProgress = item.status === "DOWNLOADING";
+    const isError = item.status === "ERROR";
 
     switch (columnKey) {
-      case "name":
+      case "progress":
         return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+          <CircularProgress
+            aria-label="Loading..."
+            size="lg"
+            value={isError ? <IoMdClose /> : item.progress}
+            color={isSuccess ? "success" : isProgress ? "warning" : "danger"}
+            showValueLabel={true}
+          />
         );
-      case "role":
+      case "thumbnail":
+        return <img src={item.thumbnail} className="h-10 w-20 rounded-md" />;
+      case "title":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">
-              {user.team}
-            </p>
           </div>
         );
-      case "status":
+      case "eta":
         return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
+          <div className="flex flex-col">
+            <p className="text-bold text-sm capitalize">{cellValue}</p>
+          </div>
+        );
+      case "rate":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-sm capitalize">{cellValue}</p>
+          </div>
+        );
+      case "size":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-sm capitalize">{cellValue}</p>
+          </div>
         );
       case "actions":
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                <FaEye />
-              </span>
-            </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="cursor-pointer text-lg text-default-400 active:opacity-50">
-                <IoPencil />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="cursor-pointer text-lg text-danger active:opacity-50">
-                <FaTrash />
-              </span>
-            </Tooltip>
-          </div>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly variant="light">
+                <HiOutlineDotsVertical />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem
+                key="open-folder"
+                showDivider
+                shortcut="O"
+                startContent={<IoFolderOpenOutline className={iconClasses} />}
+              >
+                Show in explorer
+              </DropdownItem>
+              <DropdownItem
+                key="open-link"
+                startContent={<IoOpenOutline className={iconClasses} />}
+              >
+                Open Link
+              </DropdownItem>
+              <DropdownItem
+                key="copy-link"
+                showDivider
+                startContent={<IoCopyOutline className={iconClasses} />}
+              >
+                Copy Link
+              </DropdownItem>
+              <DropdownItem
+                key="logs"
+                showDivider
+                shortcut="L"
+                startContent={<IoTerminalOutline className={iconClasses} />}
+              >
+                View logs
+              </DropdownItem>
+              <DropdownItem
+                key="delete"
+                className="text-danger"
+                color="danger"
+                shortcut="⌘⌫"
+                startContent={<FaTrash className={iconClasses} />}
+              >
+                Delete File
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         );
       default:
         return cellValue;
@@ -94,7 +139,7 @@ export default function DownloadTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={users}>
+      <TableBody items={downloadsMock}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
