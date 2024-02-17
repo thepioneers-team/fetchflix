@@ -1,3 +1,4 @@
+import DownloadTable from "./components/download/DownloadTable";
 import LinkInput from "./components/LinkInput";
 import OptionsBar from "./components/OptionsBar";
 function App(): JSX.Element {
@@ -7,6 +8,7 @@ function App(): JSX.Element {
     <>
       <LinkInput />
       <OptionsBar />
+      <DownloadTable />
     </>
   );
 }
