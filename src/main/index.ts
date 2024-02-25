@@ -80,6 +80,7 @@ function createWindow(): void {
       absolutePath: result.filePaths[0],
     };
   });
+
   ipcMain.handle("open-cookies", async () => {
     const result = await dialog.showOpenDialog({
       properties: ["openFile"],
