@@ -1,16 +1,36 @@
 import { Button } from "@nextui-org/react";
 import { useCookies, useCredentials } from "@renderer/stores/credentials";
 import { linkRegex } from "@renderer/utils/constants";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import Credentials from "./Credentials";
 import QualitySelector from "./QualitySelector";
+
 const LinkInput = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [turboMode, setTurboMode] = useState(false);
   const [link, setLink] = useState("");
   const { credentials } = useCredentials();
   const { cookiePath, cookies } = useCookies();
+
+  useEffect(() => {
+    const handleKeypress = (event: KeyboardEvent) => {
+      if (
+        event.key === "Enter" &&
+        document.activeElement === inputRef.current
+      ) {
+        handleDownload();
+      }
+    };
+
+    document.addEventListener("keypress", handleKeypress);
+
+    return () => {
+      document.removeEventListener("keypress", handleKeypress);
+    };
+  });
 
   const handleTurboClick = useCallback(() => {
     setTurboMode((current) => {
@@ -24,6 +44,7 @@ const LinkInput = () => {
     console.log(cookiePath, cookies);
     if (linkRegex.test(link)) {
       window.api.downloads.start(link);
+      inputRef.current?.blur();
     }
   };
 
@@ -36,6 +57,7 @@ const LinkInput = () => {
         {turboMode ? <HiLightningBolt /> : <HiOutlineLightningBolt />}
       </div>
       <input
+        ref={inputRef}
         value={link}
         onChange={(e) => {
           setLink(e.target.value);
