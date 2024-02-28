@@ -45,6 +45,7 @@ const LinkInput = () => {
     if (linkRegex.test(link)) {
       window.api.downloads.start(link);
       inputRef.current?.blur();
+      setLink("");
     }
   };
 
