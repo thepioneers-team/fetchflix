@@ -65,7 +65,7 @@ export default function Settings() {
               <ModalFooter>
                 <Button
                   color="primary"
-                  className="bg-primary/80 font-medium"
+                  className="bg-primary/80 font-medium text-black"
                   onPress={onClose}
                 >
                   Looks good, save it!
