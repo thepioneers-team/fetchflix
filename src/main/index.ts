@@ -1,9 +1,9 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
+import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import { BrowserWindow, app, dialog, ipcMain, shell } from "electron";
 import path, { join } from "path";
-import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { Downloader } from "./downloader";
-import { ensureSettings } from "./functions";
+import { ensureSettings, fetchSettings, updateSettings } from "./functions";
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -67,19 +67,38 @@ function createWindow(): void {
       properties: ["openDirectory"],
     });
 
+    let relativePath = "";
+    let absolutePath = "";
+
     // TODO: check config file and see if there already a pre-set setting if not then revert to this :)
-    if (result.canceled)
+    if (result.canceled) {
+      const { outputPath } = await fetchSettings(
+        `${app.getPath("userData")}/settings.json`,
+      );
+
+      relativePath = path.relative(
+        app.getPath("home"),
+        outputPath || app.getPath("userData"),
+      );
+
+      absolutePath = outputPath || app.getPath("userData");
+
       return {
-        relativePath: path.relative(
-          app.getPath("home"),
-          app.getPath("downloads"),
-        ),
-        absolutePath: app.getPath("downloads"),
+        relativePath,
+        absolutePath,
       };
+    }
+
+    relativePath = path.relative(app.getPath("home"), result.filePaths[0]);
+    absolutePath = result.filePaths[0];
+
+    updateSettings(`${app.getPath("userData")}/settings.json`, {
+      outputPath: absolutePath,
+    });
 
     return {
-      relativePath: path.relative(app.getPath("home"), result.filePaths[0]),
-      absolutePath: result.filePaths[0],
+      relativePath,
+      absolutePath,
     };
   });
 

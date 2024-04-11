@@ -2,9 +2,9 @@ import type { ChildProcessWithoutNullStreams } from "child_process";
 import { spawn } from "child_process";
 import { IncomingMessage, app, net } from "electron";
 import fs, { WriteStream } from "fs";
-import { darwinYTDL, linuxYTDL, windowsYTDL } from "./constants";
-import { ISettings } from "./validators/settings";
 import template from "lodash.template";
+import { darwinYTDL, linuxYTDL, windowsYTDL } from "./constants";
+import { fetchSettings } from "./functions";
 
 // TODO: add an function to stream responses to the frontend using ipc
 
@@ -222,7 +222,7 @@ export class Downloader {
   }
 
   private async buildCommand() {
-    let { outputPath, outputTemplate } = await this.fetchSettings(
+    let { outputPath, outputTemplate } = await fetchSettings(
       `${app.getPath("userData")}/settings.json`,
     );
 
@@ -344,24 +344,6 @@ export class Downloader {
       this.title = data;
       this.stats.eta = "?";
     }
-  }
-
-  private fetchSettings(settingsPath: string): Promise<ISettings> {
-    return new Promise((resolve, reject) => {
-      let settings: ISettings = {};
-
-      try {
-        const fileContents = fs.readFileSync(settingsPath, "utf8");
-
-        settings = JSON.parse(fileContents);
-
-        resolve(settings);
-      } catch (err) {
-        console.error(`Failed to read settings from ${settingsPath}:`, err);
-
-        reject(err);
-      }
-    });
   }
 
   cancel() {
