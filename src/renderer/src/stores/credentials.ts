@@ -3,6 +3,7 @@ import {
   Credentials,
   IuseCookies,
   IuseCredentials,
+  IuseFormat,
   browserCookie,
 } from "@renderer/types/Credentials";
 
@@ -27,4 +28,9 @@ export const useCookies = create<IuseCookies>((set) => ({
   cookiePath: "",
   setCookies: (cookies: browserCookie) => set((_) => ({ cookies: cookies })),
   setCookiePath: (path: string) => set((_) => ({ cookiePath: path })),
+}));
+
+export const useFormat = create<IuseFormat>((set) => ({
+  format: "best",
+  setFormat: (format: string) => set({ format }),
 }));

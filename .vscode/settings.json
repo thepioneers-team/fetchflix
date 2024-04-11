@@ -15,6 +15,7 @@
     "FLAC",
     "Topbar",
     "VORBIS",
-    "WEBM"
+    "WEBM",
+    "ytdl"
   ]
 }

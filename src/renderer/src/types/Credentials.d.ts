@@ -28,3 +28,8 @@ export interface IuseCookies {
   setCookies: (cookies: browserCookie) => void;
   setCookiePath: (path: string) => void;
 }
+
+export interface IuseFormat {
+  format: string;
+  setFormat: (format: string) => void;
+}

@@ -5,6 +5,7 @@ import {
   PopoverTrigger,
   cn,
 } from "@nextui-org/react";
+import { useFormat } from "@renderer/stores/credentials";
 import { FORMATS } from "@renderer/utils/constants";
 import { useState } from "react";
 
@@ -13,9 +14,11 @@ import { RiFileVideoLine } from "react-icons/ri";
 
 const QualitySelector = () => {
   const [selectedValue, setSelectedValue] = useState<string | null>("BEST");
+  const { setFormat } = useFormat();
 
   const handleValueChange = (value: string) => {
     setSelectedValue(value);
+    setFormat(value);
     // alert main process
   };
 

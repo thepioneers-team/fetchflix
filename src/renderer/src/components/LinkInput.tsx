@@ -1,5 +1,9 @@
 import { Button } from "@nextui-org/react";
-import { useCookies, useCredentials } from "@renderer/stores/credentials";
+import {
+  useCookies,
+  useCredentials,
+  useFormat,
+} from "@renderer/stores/credentials";
 import { linkRegex } from "@renderer/utils/constants";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
@@ -14,6 +18,8 @@ const LinkInput = () => {
   const [link, setLink] = useState("");
   const { credentials } = useCredentials();
   const { cookiePath, cookies } = useCookies();
+  const { format } = useFormat();
+  // TODO: create store for the format
 
   useEffect(() => {
     const handleKeypress = (event: KeyboardEvent) => {
@@ -42,8 +48,14 @@ const LinkInput = () => {
   const handleDownload = () => {
     console.log(credentials);
     console.log(cookiePath, cookies);
+
     if (linkRegex.test(link)) {
-      window.api.downloads.start(link);
+      window.api.downloads.start({
+        url: link,
+        cookies,
+        credentials,
+        format,
+      });
       inputRef.current?.blur();
       setLink("");
     }
