@@ -70,7 +70,6 @@ function createWindow(): void {
     let relativePath = "";
     let absolutePath = "";
 
-    // TODO: check config file and see if there already a pre-set setting if not then revert to this :)
     if (result.canceled) {
       const { outputPath } = await fetchSettings(
         `${app.getPath("userData")}/settings.json`,
