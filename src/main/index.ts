@@ -2,6 +2,8 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
 import path, { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
+import { Downloader } from "./downloader";
+import { ensureSettings } from "./functions";
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -97,7 +99,14 @@ function createWindow(): void {
   });
 
   ipcMain.handle("start-download", (_, args) => {
-    console.log(args);
+    const client = new Downloader({
+      cookies: args.cookies,
+      credentials: args.credentials,
+      url: args.url,
+      format: "BEST",
+    });
+
+    client.start();
   });
 }
 
@@ -111,6 +120,7 @@ app.whenReady().then(() => {
   ipcMain.on("ping", () => console.log("pong"));
 
   createWindow();
+  ensureSettings(app.getPath("userData"), "settings.json");
 
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

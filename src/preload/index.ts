@@ -1,10 +1,11 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
+import { DownloadArgs } from "./types"
 
 // Custom APIs for renderer
 export const api = {
   downloads: {
-    start: (url: string) => ipcRenderer.invoke("start-download", url),
+    start: (params: DownloadArgs) => ipcRenderer.invoke("start-download", params),
   },
   info: {
     getOS: () => ipcRenderer.invoke("get/os"),
