@@ -19,7 +19,6 @@ const LinkInput = () => {
   const { credentials } = useCredentials();
   const { cookiePath, cookies } = useCookies();
   const { format } = useFormat();
-  // TODO: create store for the format
 
   useEffect(() => {
     const handleKeypress = (event: KeyboardEvent) => {

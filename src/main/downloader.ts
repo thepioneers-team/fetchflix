@@ -6,6 +6,8 @@ import { darwinYTDL, linuxYTDL, windowsYTDL } from "./constants";
 import { ISettings } from "./validators/settings";
 import template from "lodash.template";
 
+// TODO: add an function to stream responses to the frontend using ipc
+
 const ARG_TEMPLATE = "--progress-template";
 
 const TEMPLATE =
