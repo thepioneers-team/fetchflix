@@ -4,6 +4,7 @@ import OptionsBar from "./components/OptionsBar";
 import DownloadTable from "./components/download/DownloadTable";
 import { Download } from "./types/DownloadTable";
 import { DownloadStats } from "./types";
+import LogViewer from "./components/LogViewer";
 
 function App(): JSX.Element {
   const [downloads, setDownloads] = useState<Download[]>([]);
@@ -44,6 +45,7 @@ function App(): JSX.Element {
       <LinkInput />
       <OptionsBar />
       <DownloadTable downloads={downloads} />
+      <LogViewer />
     </>
   );
 }
