@@ -1,5 +1,5 @@
 import { Button } from "@nextui-org/react";
-import { useDownloadDir } from "@renderer/stores/downloads";
+import { useDownloadDir } from "@renderer/stores/outputDir";
 import { useEffect } from "react";
 import { FaFolder } from "react-icons/fa";
 

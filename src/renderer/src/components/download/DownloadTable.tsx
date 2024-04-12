@@ -13,21 +13,26 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import React from "react";
-import { columns, downloadsMock } from "./data";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { columns } from "./data";
 
-import { IoMdClose } from "react-icons/io";
 import { FaTrash } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 import {
   IoCopyOutline,
   IoFolderOpenOutline,
   IoOpenOutline,
   IoTerminalOutline,
 } from "react-icons/io5";
+import { Download } from "@renderer/types/DownloadTable";
 
 const iconClasses = "w-4 h-4 pointer-events-none flex-shrink-0";
 
-export default function DownloadTable() {
+interface Props {
+  downloads: Array<Download>;
+}
+
+export default function DownloadTable({ downloads }: Props) {
   const renderCell = React.useCallback((item, columnKey) => {
     const cellValue = item[columnKey];
 
@@ -139,7 +144,7 @@ export default function DownloadTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={downloadsMock}>
+      <TableBody items={downloads}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

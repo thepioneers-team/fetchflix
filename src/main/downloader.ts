@@ -1,10 +1,11 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import { spawn } from "child_process";
-import { IncomingMessage, app, net } from "electron";
+import { BrowserWindow, IncomingMessage, app, ipcMain, net } from "electron";
 import fs, { WriteStream } from "fs";
 import template from "lodash.template";
 import { darwinYTDL, linuxYTDL, windowsYTDL } from "./constants";
 import { fetchSettings } from "./functions";
+import { ulid } from "ulid";
 
 // TODO: add an function to stream responses to the frontend using ipc
 
@@ -66,6 +67,7 @@ export class Downloader {
 
   // video info / Job info
   status: Status = "INACTIVE";
+  id: string = ulid();
   url: string = "";
   format: string = "";
   cookies: string = "";
@@ -97,6 +99,8 @@ export class Downloader {
     if (this.done) return; // set some stats or data to tell the frontend its actually done
 
     if (!this.paused) {
+      this.sendStats();
+
       this.active = true;
       this.done = false;
 
@@ -111,30 +115,36 @@ export class Downloader {
   }
 
   private ensureYTDL(): Promise<string> {
-    const extension = process.platform === "win32" ? ".exe" : "";
-    const ytdlPath = `${app.getPath("userData")}/yt-dlp${extension}`;
+    const binaryName = `yt-dlp${process.platform === "win32" ? ".exe" : ""}`;
+    const fullPath = `${app.getPath("userData")}/${binaryName}`;
+
+    console.log("Ensuring YTDL");
 
     return new Promise((resolve, reject) => {
-      if (fs.existsSync(ytdlPath)) {
-        resolve(ytdlPath);
+      if (fs.existsSync(fullPath)) {
+        console.log("YTDL already exists");
+        resolve(fullPath);
       } else {
-        this.logs.push(
+        console.log("YTDL Binary was not found!");
+        this.sendLogs(
           "[ WARNING ] yt-dlp binary file was not found... Installing.",
         );
-        this.downloadYTDLFromGithub()
-          .then(() => resolve(ytdlPath))
-          .catch((error) => reject(error));
+        this.downloadYTDLFromGithub(fullPath)
+          .then(() => resolve(fullPath))
+          .catch((error) => {
+            console.error("Failed to download YTDL:", error);
+            reject(error);
+          });
       }
     });
   }
 
-  private downloadYTDLFromGithub(): Promise<void> {
+  private downloadYTDLFromGithub(fullPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const platform = process.platform;
-      const ytdlBinaryOutputPath = app.getPath("userData");
+      console.log("Downloading YTDL from GitHub");
 
       let url: string = "";
-
       switch (platform) {
         case "darwin":
           url = darwinYTDL;
@@ -151,42 +161,39 @@ export class Downloader {
       }
 
       const request = net.request(url);
-
       request.on("response", (response: IncomingMessage) => {
         if (response.statusCode === 200) {
-          const fileStream: WriteStream =
-            fs.createWriteStream(ytdlBinaryOutputPath);
-
-          response.on("data", (chunk: Buffer) => {
-            fileStream.write(chunk);
-          });
-
+          const fileStream = fs.createWriteStream(fullPath);
+          response.on("data", (chunk: Buffer) => fileStream.write(chunk));
           response.on("end", () => {
             fileStream.end(() => {
-              console.log("File has been written successfully.");
+              console.log("YTDL downloaded and saved successfully.");
               resolve();
             });
           });
-
           response.on("error", (error: Error) => {
+            console.error("Error writing file:", error);
             fileStream.close();
             reject(error);
           });
         } else {
           reject(
             new Error(
-              `Failed to download: ${response.statusCode} ${response.statusMessage}`,
+              `Failed to download YTDL: ${response.statusCode} ${response.statusMessage}`,
             ),
           );
         }
       });
-
+      request.on("error", (error) => {
+        console.error("Error downloading file:", error);
+        reject(error);
+      });
       request.end();
     });
   }
 
   private getMetadata() {
-    this.logs.push("Gathering metadata...");
+    this.sendLogs("Gathering metadata...");
 
     // Spawn youtube-dl process
     const processor = spawn(this.ytdl_path, [
@@ -207,7 +214,8 @@ export class Downloader {
 
       console.log(lines);
 
-      this.logs.push("Metadata gathered...");
+      this.sendLogs("Metadata gathered...");
+      this.sendStats();
 
       processor.kill();
     });
@@ -215,7 +223,7 @@ export class Downloader {
     // Capture stderr data
     processor.stderr.on("data", (data) => {
       console.error(`Error: ${data}`);
-      this.logs.push(
+      this.sendLogs(
         `Failed to fetch metadata (thumbnail | title) for ${this.url}`,
       );
     });
@@ -254,7 +262,7 @@ export class Downloader {
     const self = this;
     self.status = "ACTIVE";
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       const args = await this.buildCommand();
 
       const processor = spawn(this.ytdl_path, args, {
@@ -269,6 +277,8 @@ export class Downloader {
 
       processor.stderr.on("data", function (data) {
         self.parseStats(data.toString());
+        self.error = true;
+        self.sendStats();
       });
 
       processor.on("exit", function (code) {
@@ -277,33 +287,59 @@ export class Downloader {
 
         self.process?.kill();
 
+        self.sendStats();
+
         resolve(code);
       });
 
       // Capture stderr data for error handling
       processor.stderr.on("data", (data) => {
         console.error(`Error: ${data}`);
-        this.logs.push(`Failed to download video for: ${this.url}`);
+        this.sendLogs(`Failed to download video for: ${this.url}`);
       });
 
       // Handle process exit
       processor.on("close", (code) => {
         if (code !== 0) {
           console.error(`Process exited with code ${code}`);
-          this.logs.push(`Failed to download video for: ${this.url}`);
+          this.sendLogs(`Failed to download video for: ${this.url}`);
         } else {
           console.log(`Process exited with code ${code}`);
-          this.logs.push(`Process exited with code ${code}`);
+          this.sendLogs(`Process exited with code ${code}`);
         }
       });
 
       processor.on("error", async function (err) {
+        console.log(err.stack?.includes("EACCES"));
+        if (err.stack?.includes("EACCES")) {
+          await self.chmodValidate();
+          self.start();
+          return;
+        }
         self.logs.push(
           `Failed to execute: ${self.url}.  Error: ${err}.  Please make sure youtube-dl(yt-dlp) is installed on your path.  If you are using a custom path, please make sure it is correct.  Use the Something Not Working menu to re-install youtube-dl(yt-dlp).`,
         );
-        reject(
-          `Please check the log for more details. Click View Console in the menu for this download.`,
-        );
+        // reject(
+        //   `Please check the log for more details. Click View Console in the menu for this download.`,
+        // );
+        // ! CANNOT REJECT AS IT WILL THROW NOTIFICATION ERROR
+      });
+    });
+  }
+
+  private chmodValidate(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.chmod(this.ytdl_path, 0o755, (err) => {
+        if (err) {
+          console.error(
+            `Failed to change permissions for ${this.ytdl_path}`,
+            err,
+          );
+          reject(`Failed to change permissions: ${err.message}`);
+        } else {
+          console.log(`Permissions changed successfully for ${this.ytdl_path}`);
+          resolve();
+        }
       });
     });
   }
@@ -323,6 +359,8 @@ export class Downloader {
       this.stats.eta = eta;
       this.stats.rate = speed;
       this.stats.duration = elapsed;
+
+      this.sendStats();
     }
 
     this.error = false;
@@ -346,6 +384,31 @@ export class Downloader {
     }
   }
 
+  private sendStats() {
+    let win = BrowserWindow.getFocusedWindow();
+
+    win?.webContents.send("download-stats", {
+      id: this.id,
+      download_stats: this.stats,
+      video_info: {
+        status: this.status,
+        title: this.title,
+        thumbnail: this.thumbnail,
+      },
+    });
+  }
+
+  private sendLogs(log: string) {
+    let win = BrowserWindow.getFocusedWindow();
+
+    this.logs.push(log);
+
+    win?.webContents.send("download-logs", {
+      id: this.id,
+      logs: this.logs,
+    });
+  }
+
   cancel() {
     this.process?.kill();
 
@@ -359,7 +422,8 @@ export class Downloader {
     this.status = "CANCELED";
 
     if (!this.thumbnail) this.thumbnail = "cancelled";
-    this.logs.push("[Process Cancelled]");
+    this.sendLogs("[Process Cancelled]");
+    this.sendStats();
   }
 
   pause() {
@@ -370,11 +434,11 @@ export class Downloader {
 
     this.status = "INACTIVE";
 
-    this.logs.push("[Download Paused By User]");
+    this.sendLogs("[Download Paused By User]");
   }
 
   resume() {
-    this.logs.push("[Download Resumed By User]");
+    this.sendLogs("[Download Resumed By User]");
 
     this.paused = false;
 
