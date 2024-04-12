@@ -11,12 +11,10 @@ import { FaTrash } from "react-icons/fa";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import {
   IoCopyOutline,
-  IoFolderOpenOutline,
   IoOpenOutline,
   IoTerminalOutline,
 } from "react-icons/io5";
 
-import { useHotkeys } from "react-hotkeys-hook";
 import { useLogs } from "@renderer/stores/logs";
 
 const iconClasses = "w-4 h-4 pointer-events-none flex-shrink-0";
@@ -28,7 +26,7 @@ interface Props {
 export default function DownloadDropdownOptions({ item }: Props) {
   const { setData } = useLogs();
 
-  useHotkeys("l", () => setData({ id: item.id, logs: [] }), []);
+  const openLogs = () => setData({ id: item.id, logs: [] });
 
   return (
     <Dropdown>
@@ -38,14 +36,6 @@ export default function DownloadDropdownOptions({ item }: Props) {
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="Static Actions">
-        <DropdownItem
-          key="open-folder"
-          showDivider
-          shortcut="O"
-          startContent={<IoFolderOpenOutline className={iconClasses} />}
-        >
-          Show in explorer
-        </DropdownItem>
         <DropdownItem
           key="open-link"
           startContent={<IoOpenOutline className={iconClasses} />}
@@ -62,7 +52,7 @@ export default function DownloadDropdownOptions({ item }: Props) {
         <DropdownItem
           key="logs"
           showDivider
-          shortcut="L"
+          onClick={openLogs}
           startContent={<IoTerminalOutline className={iconClasses} />}
         >
           View logs
@@ -71,7 +61,6 @@ export default function DownloadDropdownOptions({ item }: Props) {
           key="delete"
           className="text-danger"
           color="danger"
-          shortcut="⌘⌫"
           startContent={<FaTrash className={iconClasses} />}
         >
           Delete File
