@@ -8,8 +8,9 @@ export type DownloadStats = {
     rate: string;
   };
   video_info: {
-    status: string;
+    status: "INACTIVE" | "ACTIVE" | "CANCELED" | "FINISHED";
     title: string;
     thumbnail: string;
+    url: string;
   };
 };

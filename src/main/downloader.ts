@@ -284,6 +284,7 @@ export class Downloader {
       processor.on("exit", function (code) {
         self.active = false;
         self.done = true;
+        self.status = "FINISHED";
 
         self.process?.kill();
 
@@ -394,6 +395,7 @@ export class Downloader {
         status: this.status,
         title: this.title,
         thumbnail: this.thumbnail,
+        url: this.url,
       },
     });
   }

@@ -42,7 +42,11 @@ export default function DownloadTable({ downloads }: Props) {
       case "title":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
+            <p className="text-bold text-sm capitalize">
+              {cellValue.length > 59
+                ? cellValue.substring(0, 59) + "..."
+                : cellValue}
+            </p>
           </div>
         );
       case "eta":

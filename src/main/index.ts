@@ -5,6 +5,8 @@ import icon from "../../resources/icon.png?asset";
 import { Downloader } from "./downloader";
 import { ensureSettings, fetchSettings, updateSettings } from "./functions";
 
+const downloads: { id: string; client: Downloader }[] = [];
+
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1300,
@@ -125,6 +127,18 @@ function createWindow(): void {
     });
 
     client.start();
+
+    downloads.push({
+      id: client.id,
+      client,
+    });
+  });
+
+  ipcMain.handle("cancel-install", (_, args) => {
+    const index = downloads.findIndex((x) => x.id === args);
+    if (index !== -1) {
+      downloads[index].client.cancel();
+    }
   });
 }
 
