@@ -17,9 +17,6 @@ dependencies:
   electron-updater:
     specifier: ^6.1.7
     version: 6.1.8
-  emoji-regex:
-    specifier: ^10.3.0
-    version: 10.3.0
   framer-motion:
     specifier: ^11.0.3
     version: 11.0.24(react-dom@18.2.0)(react@18.2.0)
@@ -4926,10 +4923,6 @@ packages:
       extract-zip: 2.0.1(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
-
-  /emoji-regex@10.3.0:
-    resolution: {integrity: sha512-QpLs9D9v9kArv4lfDEgg1X/gN5XLnf/A6l9cs8SPZLRZR3ZkY9+kwIQTxm+fsSej5UMYGE8fdoaZVIBlqG0XTw==}
-    dev: false
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
