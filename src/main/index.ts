@@ -4,6 +4,7 @@ import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
 import { Downloader } from "./downloader";
 import { ensureSettings, fetchSettings, updateSettings } from "./functions";
+import { unlinkSync } from "fs";
 
 const downloads: { id: string; client: Downloader }[] = [];
 
@@ -138,6 +139,28 @@ function createWindow(): void {
     const index = downloads.findIndex((x) => x.id === args);
     if (index !== -1) {
       downloads[index].client.cancel();
+    }
+  });
+
+  // ipcMain.handle("delete-file", (_, args) => {
+  //   const index = downloads.findIndex((x) => x.id === args);
+  //   if (index !== -1) {
+  //     const client = downloads[index].client;
+  //     unlinkSync(path.join(client.outputPath, client.title));
+  //   }
+  // });
+
+  ipcMain.handle("resume-install", (_, args) => {
+    const index = downloads.findIndex((x) => x.id === args);
+    if (index !== -1) {
+      downloads[index].client.resume();
+    }
+  });
+
+  ipcMain.handle("pause-install", (_, args) => {
+    const index = downloads.findIndex((x) => x.id === args);
+    if (index !== -1) {
+      downloads[index].client.pause();
     }
   });
 }

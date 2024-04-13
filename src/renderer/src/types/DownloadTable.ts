@@ -1,7 +1,7 @@
 export type Download = {
   id: string;
   progress: number;
-  status: "INACTIVE" | "ACTIVE" | "CANCELED" | "FINISHED";
+  status: "INACTIVE" | "ACTIVE" | "CANCELED" | "FINISHED" | "PAUSED";
   thumbnail: string;
   title: string;
   eta: string;

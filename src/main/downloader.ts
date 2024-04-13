@@ -42,7 +42,7 @@ type Stats = {
   duration: string;
 };
 
-type Status = "INACTIVE" | "ACTIVE" | "CANCELED" | "FINISHED";
+type Status = "INACTIVE" | "ACTIVE" | "CANCELED" | "FINISHED" | "PAUSED";
 
 export class Downloader {
   // downloader info
@@ -60,7 +60,7 @@ export class Downloader {
   error: boolean = false;
 
   // private video info
-  private title: string = "";
+  title: string = "";
   private thumbnail: string = "";
 
   private logs: Array<string> = [];
@@ -72,6 +72,7 @@ export class Downloader {
   format: string = "";
   cookies: string = "";
   credentials: Credentials = { username: "", password: "" };
+  outputPath: string = "";
   stats: Stats = {
     percent: 0,
     eta: 0,
@@ -90,15 +91,22 @@ export class Downloader {
   async start() {
     if (!this.initialized) this.initialized = true;
 
+    console.log("initalized check passed");
+
     if (this.canceled) {
       this.title = this.title.replace("[PENDING]", "[CANCELLED]");
       this.thumbnail = "cancelled";
       return;
     }
 
+    console.log("not canceled");
+
     if (this.done) return; // set some stats or data to tell the frontend its actually done
 
+    console.log("is not done");
+
     if (!this.paused) {
+      console.log("is not paused");
       this.sendStats();
 
       this.active = true;
@@ -111,6 +119,7 @@ export class Downloader {
       this.getMetadata();
 
       await this.downloadVideo();
+      console.log("downloading data again");
     }
   }
 
@@ -237,6 +246,8 @@ export class Downloader {
     if (outputPath?.includes("<%= path %>"))
       outputPath = template({ path: app.getPath("downloads") });
 
+    this.outputPath = outputPath!;
+
     const args = [
       "--output",
       `${outputPath}/${outputTemplate}`,
@@ -283,8 +294,11 @@ export class Downloader {
 
       processor.on("exit", function (code) {
         self.active = false;
-        self.done = true;
-        self.status = "FINISHED";
+
+        if (self.stats.percent === 100) {
+          self.status = "FINISHED";
+          self.done = true;
+        }
 
         self.process?.kill();
 
@@ -432,21 +446,27 @@ export class Downloader {
     this.process?.kill();
 
     this.paused = true;
-    this.active = false;
+    this.active = true;
 
-    this.status = "INACTIVE";
+    this.status = "PAUSED";
 
     this.sendLogs("[Download Paused By User]");
+    this.sendStats();
   }
 
   resume() {
     this.sendLogs("[Download Resumed By User]");
 
     this.paused = false;
+    this.active = true;
+    this.canceled = false;
 
     this.status = "ACTIVE";
 
+    console.log("resuming download");
+
     this.start();
+    this.sendStats();
   }
 
   reset = () => {

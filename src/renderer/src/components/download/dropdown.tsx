@@ -23,6 +23,8 @@ import { useLogs } from "@renderer/stores/logs";
 import { ReactNode } from "react";
 import { useDownload } from "@renderer/stores/download";
 
+import { IoPauseCircleOutline } from "react-icons/io5";
+
 const iconClasses = "w-4 h-4 pointer-events-none flex-shrink-0";
 
 interface Props {
@@ -41,6 +43,8 @@ export default function DownloadDropdownOptions({ item }: Props) {
     await window.api.app.openExternalURL(href);
   };
 
+  console.log(item.status);
+
   const renderActionButton = () => {
     let button: ReactNode;
 
@@ -52,7 +56,7 @@ export default function DownloadDropdownOptions({ item }: Props) {
             className="text-danger"
             color="danger"
             onClick={() =>
-              window.electron.ipcRenderer.send("cancel-install", item.id)
+              window.electron.ipcRenderer.invoke("cancel-install", item.id)
             }
             startContent={<IoMdClose className={iconClasses} />}
           >
@@ -66,8 +70,9 @@ export default function DownloadDropdownOptions({ item }: Props) {
             key="delete-file"
             className="text-danger"
             color="danger"
+            isDisabled
             onClick={() =>
-              window.electron.ipcRenderer.send("delete-file", item.id)
+              window.electron.ipcRenderer.invoke("delete-file", item.id)
             }
             startContent={<FaTrash className={iconClasses} />}
           >
@@ -82,7 +87,22 @@ export default function DownloadDropdownOptions({ item }: Props) {
             className="text-danger"
             color="primary"
             onClick={() =>
-              window.electron.ipcRenderer.send("resume-install", item.id)
+              window.electron.ipcRenderer.invoke("resume-install", item.id)
+            }
+            startContent={<RxResume className={iconClasses} />}
+          >
+            Resume
+          </DropdownItem>
+        );
+        break;
+      case "PAUSED":
+        button = (
+          <DropdownItem
+            key="resume"
+            className="text-danger"
+            color="primary"
+            onClick={() =>
+              window.electron.ipcRenderer.invoke("resume-install", item.id)
             }
             startContent={<RxResume className={iconClasses} />}
           >
@@ -140,6 +160,16 @@ export default function DownloadDropdownOptions({ item }: Props) {
           startContent={<IoRemoveOutline className={iconClasses} />}
         >
           Remove from app (keep file)
+        </DropdownItem>
+        <DropdownItem
+          key="pause-install"
+          isDisabled={item.status !== "ACTIVE"}
+          onClick={() =>
+            window.electron.ipcRenderer.invoke("pause-install", item.id)
+          }
+          startContent={<IoPauseCircleOutline className={iconClasses} />}
+        >
+          Pause Download
         </DropdownItem>
         <DropdownItem
           key="logs"
