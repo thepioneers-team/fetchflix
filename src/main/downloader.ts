@@ -1,11 +1,12 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import { spawn } from "child_process";
-import { BrowserWindow, IncomingMessage, app, ipcMain, net } from "electron";
-import fs, { WriteStream } from "fs";
+import { BrowserWindow, IncomingMessage, app, net } from "electron";
+import fs from "fs";
 import template from "lodash.template";
+import { ulid } from "ulid";
 import { darwinYTDL, linuxYTDL, windowsYTDL } from "./constants";
 import { fetchSettings } from "./functions";
-import { ulid } from "ulid";
+import emojiRegex from "emoji-regex";
 
 // TODO: add an function to stream responses to the frontend using ipc
 
@@ -236,6 +237,16 @@ export class Downloader {
 
     if (outputPath?.includes("<%= path %>"))
       outputPath = template({ path: app.getPath("downloads") });
+
+    const regex = emojiRegex();
+    const match = this.title.match(regex);
+
+    // Check if the string starts with an emoji
+    if (match && this.title.startsWith(match[0])) {
+      // Remove the emoji and any subsequent whitespace
+      const modifiedTitle = this.title.substring(match[0].length).trim();
+      outputTemplate?.replace("%(title)s", modifiedTitle);
+    }
 
     const args = [
       "--output",
