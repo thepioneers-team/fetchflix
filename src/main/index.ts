@@ -4,7 +4,6 @@ import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
 import { Downloader } from "./downloader";
 import { ensureSettings, fetchSettings, updateSettings } from "./functions";
-import { unlinkSync } from "fs";
 
 const downloads: { id: string; client: Downloader }[] = [];
 
