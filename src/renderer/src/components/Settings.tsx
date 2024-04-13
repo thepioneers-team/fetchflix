@@ -9,8 +9,33 @@ import {
 } from "@nextui-org/react";
 import { IoSettingsOutline } from "react-icons/io5";
 
+import { Tab, Tabs } from "@nextui-org/react";
+import Advanced from "./settings/advanced";
+import General from "./settings/general";
+import Networking from "./settings/networking";
+import PostProcessing from "./settings/post-processing";
+
 export default function Settings() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const tabs = [
+    {
+      title: "General",
+      component: General,
+    },
+    {
+      title: "Networking",
+      component: Networking,
+    },
+    {
+      title: "Post Processing",
+      component: PostProcessing,
+    },
+    {
+      title: "Advanced",
+      component: Advanced,
+    },
+  ];
 
   return (
     <>
@@ -24,9 +49,11 @@ export default function Settings() {
       <Modal
         backdrop="blur"
         isOpen={isOpen}
+        isDismissable={false}
+        isKeyboardDismissDisabled={false}
         classNames={{
           body: "py-6",
-          base: "bg-zinc-800 text-foreground-50",
+          base: "bg-zinc-800 max-w-[800px] max-h-[600px] h-full text-foreground-50",
           header: "border-b-[1px] border-[#313131]",
           footer: "border-t-[1px] border-[#313131]",
           closeButton: "hover:bg-white/5 active:bg-white/10",
@@ -60,7 +87,13 @@ export default function Settings() {
                 Settings
               </ModalHeader>
               <ModalBody>
-                <p>add tabs</p>
+                <Tabs color="primary" aria-label="Options">
+                  {tabs.map((tab) => (
+                    <Tab key={tab.title.toLowerCase()} title={tab.title}>
+                      <tab.component />
+                    </Tab>
+                  ))}
+                </Tabs>
               </ModalBody>
               <ModalFooter>
                 <Button
