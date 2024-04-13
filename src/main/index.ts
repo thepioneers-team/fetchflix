@@ -163,6 +163,15 @@ function createWindow(): void {
       downloads[index].client.pause();
     }
   });
+
+  ipcMain.handle("get-logs", async (_, args) => {
+    const index = downloads.findIndex((x) => x.id === args);
+    if (index !== -1) {
+      return downloads[index].client.logs;
+    }
+
+    return ["No logs were found for this download"];
+  });
 }
 
 app.whenReady().then(() => {

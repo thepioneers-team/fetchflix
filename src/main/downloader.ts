@@ -63,7 +63,7 @@ export class Downloader {
   title: string = "";
   private thumbnail: string = "";
 
-  private logs: Array<string> = [];
+  logs: Array<string> = [];
 
   // video info / Job info
   status: Status = "INACTIVE";
