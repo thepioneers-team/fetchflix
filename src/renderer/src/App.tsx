@@ -53,6 +53,7 @@ function App(): JSX.Element {
 
           setDownloads(downloads.filter((x) => x.id !== id));
           resetEvent();
+          break;
       }
     }
   }, [event]);
