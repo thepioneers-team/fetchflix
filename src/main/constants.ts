@@ -11,3 +11,7 @@ export const windowsYTDL =
 
 export const linuxYTDL =
   "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp";
+
+export enum ERRORS {
+  NOT_PLAYLIST = "NOT PLAYLIST",
+}

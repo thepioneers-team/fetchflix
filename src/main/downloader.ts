@@ -5,7 +5,7 @@ import fs from "fs";
 import template from "lodash.template";
 import { ulid } from "ulid";
 import { darwinYTDL, linuxYTDL, windowsYTDL } from "./constants";
-import { fetchSettings } from "./functions";
+import { ensureYTDL, fetchSettings } from "./functions";
 
 // TODO: add an function to stream responses to the frontend using ipc
 
@@ -112,7 +112,7 @@ export class Downloader {
       this.active = true;
       this.done = false;
 
-      const ytdlPath = await this.ensureYTDL();
+      const ytdlPath = await ensureYTDL(); // change to this.ensureYTDL() if needed
 
       this.ytdl_path = ytdlPath;
 
@@ -123,83 +123,83 @@ export class Downloader {
     }
   }
 
-  private ensureYTDL(): Promise<string> {
-    const binaryName = `yt-dlp${process.platform === "win32" ? ".exe" : ""}`;
-    const fullPath = `${app.getPath("userData")}/${binaryName}`;
+  // private ensureYTDL(): Promise<string> {
+  //   const binaryName = `yt-dlp${process.platform === "win32" ? ".exe" : ""}`;
+  //   const fullPath = `${app.getPath("userData")}/${binaryName}`;
 
-    console.log("Ensuring YTDL");
+  //   console.log("Ensuring YTDL");
 
-    return new Promise((resolve, reject) => {
-      if (fs.existsSync(fullPath)) {
-        console.log("YTDL already exists");
-        resolve(fullPath);
-      } else {
-        console.log("YTDL Binary was not found!");
-        this.sendLogs(
-          "[ WARNING ] yt-dlp binary file was not found... Installing.",
-        );
-        this.downloadYTDLFromGithub(fullPath)
-          .then(() => resolve(fullPath))
-          .catch((error) => {
-            console.error("Failed to download YTDL:", error);
-            reject(error);
-          });
-      }
-    });
-  }
+  //   return new Promise((resolve, reject) => {
+  //     if (fs.existsSync(fullPath)) {
+  //       console.log("YTDL already exists");
+  //       resolve(fullPath);
+  //     } else {
+  //       console.log("YTDL Binary was not found!");
+  //       this.sendLogs(
+  //         "[ WARNING ] yt-dlp binary file was not found... Installing.",
+  //       );
+  //       this.downloadYTDLFromGithub(fullPath)
+  //         .then(() => resolve(fullPath))
+  //         .catch((error) => {
+  //           console.error("Failed to download YTDL:", error);
+  //           reject(error);
+  //         });
+  //     }
+  //   });
+  // }
 
-  private downloadYTDLFromGithub(fullPath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const platform = process.platform;
-      console.log("Downloading YTDL from GitHub");
+  // private downloadYTDLFromGithub(fullPath: string): Promise<void> {
+  //   return new Promise((resolve, reject) => {
+  //     const platform = process.platform;
+  //     console.log("Downloading YTDL from GitHub");
 
-      let url: string = "";
-      switch (platform) {
-        case "darwin":
-          url = darwinYTDL;
-          break;
-        case "win32":
-          url = windowsYTDL;
-          break;
-        case "linux":
-          url = linuxYTDL;
-          break;
-        default:
-          reject(new Error(`Unsupported platform: ${platform}`));
-          return;
-      }
+  //     let url: string = "";
+  //     switch (platform) {
+  //       case "darwin":
+  //         url = darwinYTDL;
+  //         break;
+  //       case "win32":
+  //         url = windowsYTDL;
+  //         break;
+  //       case "linux":
+  //         url = linuxYTDL;
+  //         break;
+  //       default:
+  //         reject(new Error(`Unsupported platform: ${platform}`));
+  //         return;
+  //     }
 
-      const request = net.request(url);
-      request.on("response", (response: IncomingMessage) => {
-        if (response.statusCode === 200) {
-          const fileStream = fs.createWriteStream(fullPath);
-          response.on("data", (chunk: Buffer) => fileStream.write(chunk));
-          response.on("end", () => {
-            fileStream.end(() => {
-              console.log("YTDL downloaded and saved successfully.");
-              resolve();
-            });
-          });
-          response.on("error", (error: Error) => {
-            console.error("Error writing file:", error);
-            fileStream.close();
-            reject(error);
-          });
-        } else {
-          reject(
-            new Error(
-              `Failed to download YTDL: ${response.statusCode} ${response.statusMessage}`,
-            ),
-          );
-        }
-      });
-      request.on("error", (error) => {
-        console.error("Error downloading file:", error);
-        reject(error);
-      });
-      request.end();
-    });
-  }
+  //     const request = net.request(url);
+  //     request.on("response", (response: IncomingMessage) => {
+  //       if (response.statusCode === 200) {
+  //         const fileStream = fs.createWriteStream(fullPath);
+  //         response.on("data", (chunk: Buffer) => fileStream.write(chunk));
+  //         response.on("end", () => {
+  //           fileStream.end(() => {
+  //             console.log("YTDL downloaded and saved successfully.");
+  //             resolve();
+  //           });
+  //         });
+  //         response.on("error", (error: Error) => {
+  //           console.error("Error writing file:", error);
+  //           fileStream.close();
+  //           reject(error);
+  //         });
+  //       } else {
+  //         reject(
+  //           new Error(
+  //             `Failed to download YTDL: ${response.statusCode} ${response.statusMessage}`,
+  //           ),
+  //         );
+  //       }
+  //     });
+  //     request.on("error", (error) => {
+  //       console.error("Error downloading file:", error);
+  //       reject(error);
+  //     });
+  //     request.end();
+  //   });
+  // }
 
   private getMetadata() {
     this.sendLogs("Gathering metadata...");

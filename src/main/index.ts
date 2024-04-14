@@ -3,7 +3,15 @@ import { BrowserWindow, app, dialog, ipcMain, shell } from "electron";
 import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
 import { Downloader } from "./downloader";
-import { ensureSettings, fetchSettings, updateSettings } from "./functions";
+import {
+  ensureSettings,
+  fetchSettings,
+  isError,
+  isErrorWithCause,
+  updateSettings,
+} from "./functions";
+import { PlaylistHelper } from "./helpers/playlist";
+import { ERRORS } from "./constants";
 
 const downloads: { id: string; client: Downloader }[] = [];
 
@@ -118,20 +126,41 @@ function createWindow(): void {
     return result;
   });
 
-  ipcMain.handle("start-download", (_, args) => {
-    const client = new Downloader({
-      cookies: args.cookies,
-      credentials: args.credentials,
-      url: args.url,
-      format: "BEST",
-    });
+  ipcMain.handle("start-download", async (_, args) => {
+    const playlistManager = new PlaylistHelper({ url: args.url });
 
-    client.start();
+    try {
+      const start = performance.now();
+      await playlistManager.validate();
+      const end = performance.now();
+      const elapsed = Math.round(end - start) / 1000;
 
-    downloads.push({
-      id: client.id,
-      client,
-    });
+      return {
+        playlist: true,
+        entries: playlistManager.playlists,
+        execTime: elapsed,
+      };
+    } catch (err) {
+      console.error(err);
+
+      const errorMsg = isError(err) ? err.message : "An unknown error occurred";
+
+      if (isErrorWithCause(err) && err.cause === ERRORS.NOT_PLAYLIST) {
+        const client = new Downloader({
+          cookies: args.cookies,
+          credentials: args.credentials,
+          url: args.url,
+          format: "BEST",
+        });
+
+        client.start();
+        downloads.push({ id: client.id, client });
+
+        return { playlist: false };
+      } else {
+        return { error: errorMsg, playlist: false };
+      }
+    }
   });
 
   ipcMain.handle("cancel-install", (_, args) => {

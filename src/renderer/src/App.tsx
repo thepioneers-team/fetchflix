@@ -6,6 +6,8 @@ import { Download } from "./types/DownloadTable";
 import { DownloadStats } from "./types";
 import LogViewer from "./components/LogViewer";
 import { useDownload } from "./stores/download";
+import { Toaster } from "sonner";
+import PlaylistManager from "./components/PlaylistManager";
 
 function App(): JSX.Element {
   const [downloads, setDownloads] = useState<Download[]>([]);
@@ -61,6 +63,8 @@ function App(): JSX.Element {
       <OptionsBar />
       <DownloadTable downloads={downloads} />
       <LogViewer />
+      <PlaylistManager />
+      <Toaster position="bottom-right" />
     </>
   );
 }

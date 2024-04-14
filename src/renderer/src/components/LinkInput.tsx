@@ -10,6 +10,8 @@ import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import Credentials from "./Credentials";
 import QualitySelector from "./QualitySelector";
+import { toast } from "sonner";
+import { usePlaylistStore } from "@renderer/stores/playlist";
 
 const LinkInput = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -19,6 +21,7 @@ const LinkInput = () => {
   const { credentials } = useCredentials();
   const { cookiePath, cookies } = useCookies();
   const { format } = useFormat();
+  const { setPlaylists } = usePlaylistStore();
 
   useEffect(() => {
     const handleKeypress = (event: KeyboardEvent) => {
@@ -44,19 +47,28 @@ const LinkInput = () => {
     });
   }, []);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     console.log(credentials);
     console.log(cookiePath, cookies);
 
     if (linkRegex.test(link)) {
-      window.api.downloads.start({
+      inputRef.current?.blur();
+      setLink("");
+
+      const data = await window.api.downloads.start({
         url: link,
         cookies,
         credentials,
         format,
       });
-      inputRef.current?.blur();
-      setLink("");
+
+      if (data.entries && !data.error) setPlaylists(data.entries);
+
+      if (data.error) {
+        toast.error("Something went wrong!", {
+          description: data.error,
+        });
+      }
     }
   };
 
