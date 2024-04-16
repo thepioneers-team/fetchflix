@@ -1,10 +1,9 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import { spawn } from "child_process";
-import { BrowserWindow, IncomingMessage, app, net } from "electron";
+import { BrowserWindow, app } from "electron";
 import fs from "fs";
 import template from "lodash.template";
 import { ulid } from "ulid";
-import { darwinYTDL, linuxYTDL, windowsYTDL } from "./constants";
 import { ensureYTDL, fetchSettings } from "./functions";
 
 // TODO: add an function to stream responses to the frontend using ipc
@@ -32,6 +31,8 @@ type DownloadArgs = {
     | "opera"
     | "none";
   credentials: Credentials;
+  command?: string;
+  isPlaylist: boolean;
 };
 
 type Stats = {
@@ -61,6 +62,7 @@ export class Downloader {
 
   // private video info
   title: string = "";
+  isPlaylist: boolean = false;
   private thumbnail: string = "";
 
   logs: Array<string> = [];
@@ -73,6 +75,7 @@ export class Downloader {
   cookies: string = "";
   credentials: Credentials = { username: "", password: "" };
   outputPath: string = "";
+  command: string | undefined;
   stats: Stats = {
     percent: 0,
     eta: 0,
@@ -81,11 +84,20 @@ export class Downloader {
     rate: "0",
   };
 
-  constructor({ url, format, cookies, credentials }: DownloadArgs) {
+  constructor({
+    url,
+    format,
+    cookies,
+    credentials,
+    command,
+    isPlaylist,
+  }: DownloadArgs) {
     this.url = url;
     this.format = format;
     this.cookies = cookies;
     this.credentials = credentials;
+    this.command = command;
+    this.isPlaylist = isPlaylist;
   }
 
   async start() {
@@ -204,32 +216,29 @@ export class Downloader {
   private getMetadata() {
     this.sendLogs("Gathering metadata...");
 
-    // Spawn youtube-dl process
-    const processor = spawn(this.ytdl_path, [
-      "--get-title",
-      "--get-thumbnail",
-      this.url,
-    ]);
+    const playlistFlag = this.url.includes("list=") ? "--yes-playlist" : "";
 
-    // Capture stdout data
+    const args = ["--get-title", "--get-thumbnail", this.url];
+    if (playlistFlag) {
+      args.push(playlistFlag);
+    }
+
+    const processor = spawn(this.ytdl_path, args);
+
     processor.stdout.on("data", (data) => {
       const lines = data
         .toString()
         .split("\n")
         .filter((line: string) => line.trim() !== "");
-
       this.title = lines[0];
-      this.thumbnail = lines[1];
+      this.thumbnail = lines.length > 1 ? lines[1] : "No thumbnail available";
 
-      console.log(lines);
-
-      this.sendLogs("Metadata gathered...");
+      this.sendLogs("Metadata gathered: " + lines.join("; "));
       this.sendStats();
 
       processor.kill();
     });
 
-    // Capture stderr data
     processor.stderr.on("data", (data) => {
       console.error(`Error: ${data}`);
       this.sendLogs(
@@ -259,8 +268,11 @@ export class Downloader {
 
     if (username !== "") args.push("--username", username);
     if (password !== "") args.push("--password", password);
+    if (this.command) args.unshift(...this.command.split(" "));
 
     args.push(this.url);
+
+    console.log(args);
 
     return args;
   }
@@ -400,7 +412,7 @@ export class Downloader {
   }
 
   private sendStats() {
-    let win = BrowserWindow.getFocusedWindow();
+    let win = BrowserWindow.getAllWindows()[0];
 
     win?.webContents.send("download-stats", {
       id: this.id,
@@ -415,7 +427,7 @@ export class Downloader {
   }
 
   private sendLogs(log: string) {
-    let win = BrowserWindow.getFocusedWindow();
+    let win = BrowserWindow.getAllWindows()[0];
 
     this.logs.push(log);
 

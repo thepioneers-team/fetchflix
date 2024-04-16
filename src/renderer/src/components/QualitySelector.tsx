@@ -37,7 +37,7 @@ const QualitySelector = () => {
             {FORMATS.map((format, idx) => (
               <>
                 {format.separator ? (
-                  <Divider key={`qs-${idx}`} className="my-2" />
+                  <Divider key={`divider-${idx}`} className="my-2" />
                 ) : (
                   <div
                     onClick={() => handleValueChange(format.value as string)}
@@ -52,7 +52,7 @@ const QualitySelector = () => {
                           selectedValue?.toLowerCase(),
                       },
                     )}
-                    key={format.value}
+                    key={`qs-${format.value}`}
                   >
                     {format.isVideo ? (
                       <RiFileVideoLine className="h-5 w-5" />

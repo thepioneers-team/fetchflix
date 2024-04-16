@@ -7,11 +7,9 @@ import {
   ensureSettings,
   fetchSettings,
   isError,
-  isErrorWithCause,
   updateSettings,
 } from "./functions";
 import { PlaylistHelper } from "./helpers/playlist";
-import { ERRORS } from "./constants";
 
 const downloads: { id: string; client: Downloader }[] = [];
 
@@ -126,40 +124,38 @@ function createWindow(): void {
     return result;
   });
 
+  // TODO: setup a way to figure out if its playlist or not first so you can show the user some dialog
   ipcMain.handle("start-download", async (_, args) => {
     const playlistManager = new PlaylistHelper({ url: args.url });
 
     try {
-      const start = performance.now();
-      await playlistManager.validate();
-      const end = performance.now();
-      const elapsed = Math.round(end - start) / 1000;
+      const isPlaylist = await playlistManager.validate();
 
-      return {
-        playlist: true,
-        entries: playlistManager.playlists,
-        execTime: elapsed,
-      };
-    } catch (err) {
-      console.error(err);
+      console.log(isPlaylist);
 
-      const errorMsg = isError(err) ? err.message : "An unknown error occurred";
-
-      if (isErrorWithCause(err) && err.cause === ERRORS.NOT_PLAYLIST) {
+      if (isPlaylist && !args.ignorePlaylist) {
+        playlistManager.fetchPlaylistDetails();
+        return { playlist: true, loading: true };
+      } else {
+        console.log(args.command);
         const client = new Downloader({
           cookies: args.cookies,
           credentials: args.credentials,
           url: args.url,
           format: "BEST",
+          command: args.command,
+          isPlaylist,
         });
 
         client.start();
         downloads.push({ id: client.id, client });
 
         return { playlist: false };
-      } else {
-        return { error: errorMsg, playlist: false };
       }
+    } catch (err) {
+      console.error(err);
+      const errorMsg = isError(err) ? err.message : "An unknown error occurred";
+      return { error: errorMsg, playlist: false };
     }
   });
 

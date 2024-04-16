@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import LinkInput from "./components/LinkInput";
-import OptionsBar from "./components/OptionsBar";
-import DownloadTable from "./components/download/DownloadTable";
-import { Download } from "./types/DownloadTable";
-import { DownloadStats } from "./types";
-import LogViewer from "./components/LogViewer";
-import { useDownload } from "./stores/download";
 import { Toaster } from "sonner";
+import LinkInput from "./components/LinkInput";
+import LogViewer from "./components/LogViewer";
+import OptionsBar from "./components/OptionsBar";
 import PlaylistManager from "./components/PlaylistManager";
+import DownloadTable from "./components/download/DownloadTable";
+import { useDownload } from "./stores/download";
+import { DownloadStats } from "./types";
+import { Download } from "./types/DownloadTable";
 
 function App(): JSX.Element {
   const [downloads, setDownloads] = useState<Download[]>([]);

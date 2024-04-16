@@ -14,3 +14,10 @@ export type DownloadStats = {
     url: string;
   };
 };
+
+export type Playlist = { title: string; thumbnail: string; index: number };
+
+export type PlaylistDetails = {
+  id: string;
+  playlists: Array<Playlist>;
+};

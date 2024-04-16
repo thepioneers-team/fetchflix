@@ -8,8 +8,11 @@ import {
   ScrollShadow,
   Switch,
 } from "@nextui-org/react";
+import { useEventStore } from "@renderer/stores/events";
 import { usePlaylistStore } from "@renderer/stores/playlist";
-import { useEffect, useState } from "react";
+import { Playlist, PlaylistDetails } from "@renderer/types";
+import { useState } from "react";
+import { toast } from "sonner";
 
 // TODO: send command to localStorage if clicked on okay else cancel
 // TODO: make sure that if the url is detected as playlist a modal shows up with a spinner
@@ -17,36 +20,63 @@ import { useEffect, useState } from "react";
 
 export default function PlaylistManager() {
   const [entries, setEntries] = useState<Array<string>>([]);
+  const [playlists, setPlaylists] = useState<Array<Playlist>>([]);
   const [opened, setOpened] = useState<boolean>(false);
-  const { playlist, reset } = usePlaylistStore();
+  const { loading, setLoading } = usePlaylistStore();
+  const { setEvent } = useEventStore();
 
-  useEffect(() => {
-    if (playlist) {
-      setOpened(true);
-      playlist.map((_, i) => setEntries((prev) => [...prev, i.toString()]));
-    }
+  const handlePlaylistDetails = (_, args: PlaylistDetails) => {
+    console.log(args);
+    toast.dismiss();
+    console.log(`IsPlaylistLoading: ${loading}`);
+    setOpened(true);
 
-    return () => {
-      setEntries([]);
-    };
-  }, [playlist]);
+    setPlaylists(args.playlists);
+    setEntries(args.playlists.map((_, i) => `${i + 1}`));
+  };
 
-  if (!playlist) return;
+  window.electron.ipcRenderer.on("playlist-details", handlePlaylistDetails);
+
+  // useEffect(() => {
+  //   if (loading) {
+  //     setOpened(true);
+  //   }
+
+  //   return () => {
+  //     setEntries([]);
+  //     window.electron.ipcRenderer.removeAllListeners("playlist-details");
+  //   };
+  // }, [loading]);
 
   const handleOpenChange = (e: boolean) => {
-    reset();
     setOpened(e);
+    if (!e) {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = (onClose: () => void) => {
+    alert("i was pressed");
+    setEvent({
+      type: "DOWNLOAD_PLAYLIST",
+      payload: {
+        items: entries,
+      },
+    });
+    onClose();
   };
 
   const handleCheckChange = (index: number) => {
     const indexStr = index.toString();
+
+    let newArray: string[];
     if (entries.includes(indexStr)) {
-      setEntries(entries.filter((x) => x !== indexStr));
+      newArray = entries.filter((x) => x !== indexStr);
     } else {
-      setEntries((prev) => [...prev, indexStr]);
+      newArray = [...entries, indexStr];
     }
 
-    console.log(entries);
+    setEntries([...new Set<string>(newArray)]); // Type of Set explicitly set to string
   };
 
   return (
@@ -90,7 +120,7 @@ export default function PlaylistManager() {
             </ModalHeader>
             <ModalBody className="overflow-y-scroll">
               <ScrollShadow className="h-auto w-auto space-y-3">
-                {playlist.map((entry, i) => (
+                {playlists.map((entry, i) => (
                   <div className="flex items-center gap-2" key={i}>
                     <img
                       src={entry.thumbnail}
@@ -101,7 +131,7 @@ export default function PlaylistManager() {
                       <Switch
                         defaultSelected
                         color="default"
-                        onValueChange={() => handleCheckChange(i)}
+                        onValueChange={() => handleCheckChange(i + 1)}
                         aria-label={`Download ${i}`}
                       />
                     </div>
@@ -110,7 +140,11 @@ export default function PlaylistManager() {
               </ScrollShadow>
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" className="text-black" onPress={onClose}>
+              <Button
+                color="primary"
+                className="text-black"
+                onPress={() => handleDownload(onClose)}
+              >
                 Download Selected
               </Button>
             </ModalFooter>
