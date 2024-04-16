@@ -7,7 +7,7 @@ import {
   windowsYTDL,
 } from "./constants";
 import { ISettings } from "./validators/settings";
-import { IncomingMessage, Notification, app, net } from "electron";
+import { IncomingMessage, app, net } from "electron";
 import fs from "fs";
 
 export async function ensureSettings(fullPath: string, fileName: string) {
