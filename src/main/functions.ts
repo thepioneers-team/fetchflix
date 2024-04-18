@@ -1,5 +1,13 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
+import {
+  BrowserWindow,
+  IncomingMessage,
+  app,
+  clipboard,
+  globalShortcut,
+  net,
+} from "electron";
+import fs, { existsSync, readFileSync, writeFileSync } from "fs";
+import path, { join } from "path";
 import {
   darwinYTDL,
   defaultSettings,
@@ -7,8 +15,7 @@ import {
   windowsYTDL,
 } from "./constants";
 import { ISettings } from "./validators/settings";
-import { IncomingMessage, app, net } from "electron";
-import fs from "fs";
+import { is } from "@electron-toolkit/utils";
 
 export async function ensureSettings(fullPath: string, fileName: string) {
   const file = path.join(fullPath, fileName);
@@ -18,7 +25,9 @@ export async function ensureSettings(fullPath: string, fileName: string) {
   }
 }
 
-export function fetchSettings(settingsPath: string): Promise<ISettings> {
+export function fetchSettings(): Promise<ISettings> {
+  const settingsPath = `${app.getPath("userData")}/settings.json`;
+
   return new Promise((resolve, reject) => {
     let settings: ISettings = {};
 
@@ -36,13 +45,12 @@ export function fetchSettings(settingsPath: string): Promise<ISettings> {
   });
 }
 
-export function updateSettings(
-  settingsPath: string,
-  updates: Partial<ISettings>,
-): Promise<void> {
+export function updateSettings(updates: Partial<ISettings>): Promise<void> {
+  const settingsPath = `${app.getPath("userData")}/settings.json`;
+
   return new Promise(async (resolve, reject) => {
     try {
-      const fileContents = await fetchSettings(settingsPath);
+      const fileContents = await fetchSettings();
       let currentSettings: ISettings = fileContents;
 
       currentSettings = { ...currentSettings, ...updates };

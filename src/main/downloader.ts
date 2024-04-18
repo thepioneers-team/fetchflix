@@ -248,9 +248,7 @@ export class Downloader {
   }
 
   private async buildCommand() {
-    let { outputPath, outputTemplate } = await fetchSettings(
-      `${app.getPath("userData")}/settings.json`,
-    );
+    let { outputPath, outputTemplate } = await fetchSettings();
 
     if (outputPath?.includes("<%= path %>"))
       outputPath = template({ path: app.getPath("downloads") });

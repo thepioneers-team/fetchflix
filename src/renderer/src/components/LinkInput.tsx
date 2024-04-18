@@ -7,7 +7,7 @@ import {
 import { useEventStore } from "@renderer/stores/events";
 import { usePlaylistStore } from "@renderer/stores/playlist";
 import { linkRegex } from "@renderer/utils/constants";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { toast } from "sonner";
@@ -43,9 +43,12 @@ const LinkInput = () => {
     };
   });
 
-  const handleTurboClick = useCallback(() => {
-    setTurboMode((current) => !current);
-  }, []);
+  // TODO: fix this shit
+  // this was wrapped in a use-callback and for some reason prevent the the state from updating within the function TODO: fix later
+  // const handleTurboClick = () => {
+  //   setTurboMode((current) => !current);
+  //   window.electron.ipcRenderer.invoke("turbo-mode-update", !turboMode); // hand to set this to the opposite ?
+  // };
 
   useEffect(() => {
     if (globalEvent) {
@@ -110,14 +113,14 @@ const LinkInput = () => {
 
   return (
     <div className="inline-flex min-h-16 min-w-[1000px] items-center gap-2 rounded-xl border-[1px] border-white/20 bg-zinc-900/70 px-2 backdrop-blur-lg">
-      <Tooltip content={turboMode ? "Turbo Mode On" : "Turbo Mode Off"}>
+      {/* <Tooltip content={turboMode ? "Turbo Mode On" : "Turbo Mode Off"}>
         <div
           onClick={handleTurboClick}
           className="cursor-pointer text-3xl text-primary"
         >
           {turboMode ? <HiLightningBolt /> : <HiOutlineLightningBolt />}
         </div>
-      </Tooltip>
+      </Tooltip> */}
       <input
         ref={inputRef}
         value={link}

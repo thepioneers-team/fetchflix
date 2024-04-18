@@ -1,6 +1,9 @@
-export const defaultSettings = {
+import { ISettings } from "./validators/settings";
+
+export const defaultSettings: ISettings = {
   outputPath: "<%= path %>",
   outputTemplate: "%(title)s.%(ext)s",
+  turboMode: false,
 };
 
 export const darwinYTDL =

@@ -11,7 +11,7 @@ import {
 } from "./functions";
 import { PlaylistHelper } from "./helpers/playlist";
 
-const downloads: { id: string; client: Downloader }[] = [];
+export const downloads: { id: string; client: Downloader }[] = [];
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -70,6 +70,12 @@ function createWindow(): void {
     shell.openExternal(url);
   });
 
+  // ipcMain.handle("turbo-mode-update", async (_, arg) => {
+  //   await updateSettings({
+  //     turboMode: arg,
+  //   });
+  // });
+
   ipcMain.handle("change-directory", async () => {
     const result = await dialog.showOpenDialog({
       properties: ["openDirectory"],
@@ -79,9 +85,7 @@ function createWindow(): void {
     let absolutePath = "";
 
     if (result.canceled) {
-      const { outputPath } = await fetchSettings(
-        `${app.getPath("userData")}/settings.json`,
-      );
+      const { outputPath } = await fetchSettings();
 
       relativePath = path.relative(
         app.getPath("home"),
@@ -99,7 +103,7 @@ function createWindow(): void {
     relativePath = path.relative(app.getPath("home"), result.filePaths[0]);
     absolutePath = result.filePaths[0];
 
-    updateSettings(`${app.getPath("userData")}/settings.json`, {
+    updateSettings({
       outputPath: absolutePath,
     });
 
@@ -142,7 +146,7 @@ function createWindow(): void {
           cookies: args.cookies,
           credentials: args.credentials,
           url: args.url,
-          format: "BEST",
+          format: args.format || "BEST",
           command: args.command,
           isPlaylist,
         });
