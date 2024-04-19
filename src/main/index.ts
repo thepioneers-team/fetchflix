@@ -11,6 +11,8 @@ import {
 } from "./functions";
 import { PlaylistHelper } from "./helpers/playlist";
 
+import "./menu";
+
 export const downloads: { id: string; client: Downloader }[] = [];
 
 function createWindow(): void {
