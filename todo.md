@@ -5,3 +5,11 @@ Ensure that phantomJS is also downloaded on the users computer (use the same thi
 ## Notifications
 
 - send notification when playlist is fully fetched
+
+## Turbo mode?
+
+## Menubar
+
+## Settings
+
+## Auto Updater
