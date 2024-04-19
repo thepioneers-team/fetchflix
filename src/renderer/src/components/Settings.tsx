@@ -53,7 +53,7 @@ export default function Settings() {
         isKeyboardDismissDisabled={false}
         classNames={{
           body: "py-6",
-          base: "bg-zinc-800 max-w-[800px] max-h-[600px] h-full text-foreground-50",
+          base: "bg-[#212121] max-w-[800px] max-h-[600px] h-full text-foreground-50",
           header: "border-b-[1px] border-[#313131]",
           footer: "border-t-[1px] border-[#313131]",
           closeButton: "hover:bg-white/5 active:bg-white/10",
