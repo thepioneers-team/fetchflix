@@ -9,7 +9,9 @@ export default function Notifications() {
     let notifications = localStorage.getItem("notifications");
     if (!notifications) setAllowNotifications(false);
 
-    setAllowNotifications(notifications?.toLocaleLowerCase() === "true");
+    console.log(notifications, notifications?.toLowerCase() === "true");
+
+    setAllowNotifications(notifications?.toLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {

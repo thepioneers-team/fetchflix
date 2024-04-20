@@ -9,7 +9,7 @@ export default function DisablePartFile() {
     let disablePartFile = localStorage.getItem("disable-part-file");
     if (!disablePartFile) setDisablePartFiles(false);
 
-    setDisablePartFiles(disablePartFile?.toLocaleLowerCase() === "true");
+    setDisablePartFiles(disablePartFile?.toLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {

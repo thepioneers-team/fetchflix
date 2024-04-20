@@ -9,7 +9,7 @@ export default function RemoveOnFinish() {
     let removeOnFinish = localStorage.getItem("remove-on-finish");
     if (!removeOnFinish) setRemoveOnFinish(false);
 
-    setRemoveOnFinish(removeOnFinish?.toLocaleLowerCase() === "true");
+    setRemoveOnFinish(removeOnFinish?.toLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {

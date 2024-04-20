@@ -9,7 +9,7 @@ export default function NoMtime() {
     let noMtime = localStorage.getItem("no-mtime");
     if (!noMtime) setNoMtime(false);
 
-    setNoMtime(noMtime?.toLocaleLowerCase() === "true");
+    setNoMtime(noMtime?.toLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {

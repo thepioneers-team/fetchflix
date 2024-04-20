@@ -9,7 +9,7 @@ export default function RestrictFileNames() {
     let restrictFileNames = localStorage.getItem("restrict-file-names");
     if (!restrictFileNames) setRestrict(false);
 
-    setRestrict(restrictFileNames?.toLocaleLowerCase() === "true");
+    setRestrict(restrictFileNames?.toLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {
