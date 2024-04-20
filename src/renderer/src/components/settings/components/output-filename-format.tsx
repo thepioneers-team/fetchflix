@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const items = [
   { placeholder: "id", type: "Str", color: "#515151" },
@@ -79,6 +79,17 @@ const items = [
 export default function OutputFilenameFormat() {
   const [format, setFormat] = useState<string>("");
 
+  useEffect(() => {
+    let format = localStorage.getItem("format");
+    if (!format) format = "%(title)s.%(ext)s";
+    setFormat(format);
+  }, []);
+
+  const formatUpdate = (new_format: string) => {
+    setFormat(`${format}%(${new_format})s`);
+    localStorage.setItem("format", format);
+  };
+
   return (
     <div>
       <input
@@ -92,10 +103,10 @@ export default function OutputFilenameFormat() {
         {items.map((item) => (
           <p
             className="inline-flex cursor-pointer select-none items-center gap-1 rounded-md px-3 py-1 text-sm"
-            onClick={() => setFormat(`${format}%(${item.placeholder})s`)}
+            onClick={() => formatUpdate(item.placeholder)}
             style={{ backgroundColor: item.color }}
           >
-            <span className="text-xs">{item.type}</span>
+            <span className="text-xs underline">{item.type}.</span>
             {item.placeholder}
           </p>
         ))}
