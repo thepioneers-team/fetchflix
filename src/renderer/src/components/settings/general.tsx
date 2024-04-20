@@ -3,6 +3,7 @@ import OutputFilenameFormat from "./components/output-filename-format";
 import RestrictFileNames from "./components/restrict-filenames";
 import DisablePartFile from "./components/disable-part-file";
 import NoMtime from "./components/no-mtime";
+import Notifications from "./components/notifications";
 
 const components = [
   {
@@ -20,6 +21,10 @@ const components = [
   {
     title: "No mtime",
     component: NoMtime,
+  },
+  {
+    title: "Notification",
+    component: Notifications,
   },
 ];
 
