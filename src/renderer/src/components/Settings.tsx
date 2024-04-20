@@ -86,7 +86,7 @@ export default function Settings() {
               <ModalHeader className="flex flex-col gap-1">
                 Settings
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="overflow-y-scroll">
                 <Tabs color="primary" aria-label="Options">
                   {tabs.map((tab) => (
                     <Tab key={tab.title.toLowerCase()} title={tab.title}>
