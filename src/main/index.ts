@@ -29,9 +29,13 @@ function createWindow(): void {
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
-      devTools: !app.isPackaged,
+      devTools: is.dev,
     },
   });
+
+  if (is.dev) {
+    mainWindow.webContents.openDevTools();
+  }
 
   if (process.platform === "darwin") {
     app.dock.setIcon(icon);
