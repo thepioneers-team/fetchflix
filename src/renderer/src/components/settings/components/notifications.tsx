@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { Switch } from "@nextui-org/react";
 
 export default function Notifications() {
-  const [restrict, setRestrict] = useState<boolean>(false);
+  const [allowNotifications, setAllowNotifications] = useState<boolean>(false);
 
   useEffect(() => {
     // TODO: add parsing
     let notifications = localStorage.getItem("notifications");
-    if (!notifications) setRestrict(false);
+    if (!notifications) setAllowNotifications(false);
 
-    setRestrict(notifications?.toLocaleLowerCase() === "true");
+    setAllowNotifications(notifications?.toLocaleLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {
-    setRestrict(selected);
+    setAllowNotifications(selected);
     localStorage.setItem("notifications", selected.toString());
   };
 
@@ -23,7 +23,10 @@ export default function Notifications() {
         If enabled, upon a download or process being completed you will be
         notified if the app is not in focus.
       </p>
-      <Switch checked={restrict} onValueChange={(e) => updateAction(e)} />
+      <Switch
+        checked={allowNotifications}
+        onValueChange={(e) => updateAction(e)}
+      />
     </div>
   );
 }

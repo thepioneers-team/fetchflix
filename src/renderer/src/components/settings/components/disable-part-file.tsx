@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { Switch } from "@nextui-org/react";
 
 export default function DisablePartFile() {
-  const [restrict, setRestrict] = useState<boolean>(false);
+  const [disablePartFiles, setDisablePartFiles] = useState<boolean>(false);
 
   useEffect(() => {
     // TODO: add parsing
     let disablePartFile = localStorage.getItem("disable-part-file");
-    if (!disablePartFile) setRestrict(false);
+    if (!disablePartFile) setDisablePartFiles(false);
 
-    setRestrict(disablePartFile?.toLocaleLowerCase() === "true");
+    setDisablePartFiles(disablePartFile?.toLocaleLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {
-    setRestrict(selected);
+    setDisablePartFiles(selected);
     localStorage.setItem("disable-part-file", selected.toString());
   };
 
@@ -23,7 +23,10 @@ export default function DisablePartFile() {
         If enabled, do not use part files. Write directly to output files
         instead.
       </p>
-      <Switch checked={restrict} onValueChange={(e) => updateAction(e)} />
+      <Switch
+        checked={disablePartFiles}
+        onValueChange={(e) => updateAction(e)}
+      />
     </div>
   );
 }

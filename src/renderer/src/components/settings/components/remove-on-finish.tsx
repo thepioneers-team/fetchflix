@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { Switch } from "@nextui-org/react";
 
 export default function RemoveOnFinish() {
-  const [restrict, setRestrict] = useState<boolean>(false);
+  const [removeOnFinish, setRemoveOnFinish] = useState<boolean>(false);
 
   useEffect(() => {
     // TODO: add parsing
     let removeOnFinish = localStorage.getItem("remove-on-finish");
-    if (!removeOnFinish) setRestrict(false);
+    if (!removeOnFinish) setRemoveOnFinish(false);
 
-    setRestrict(removeOnFinish?.toLocaleLowerCase() === "true");
+    setRemoveOnFinish(removeOnFinish?.toLocaleLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {
-    setRestrict(selected);
+    setRemoveOnFinish(selected);
     localStorage.setItem("remove-on-finish", selected.toString());
   };
 
@@ -23,7 +23,7 @@ export default function RemoveOnFinish() {
         Once a download is completed it will be automatically deleted from the
         app (the downloaded file will remain)
       </p>
-      <Switch checked={restrict} onValueChange={(e) => updateAction(e)} />
+      <Switch checked={removeOnFinish} onValueChange={(e) => updateAction(e)} />
     </div>
   );
 }

@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { Switch } from "@nextui-org/react";
 
 export default function NoMtime() {
-  const [restrict, setRestrict] = useState<boolean>(false);
+  const [noMtime, setNoMtime] = useState<boolean>(false);
 
   useEffect(() => {
     // TODO: add parsing
     let noMtime = localStorage.getItem("no-mtime");
-    if (!noMtime) setRestrict(false);
+    if (!noMtime) setNoMtime(false);
 
-    setRestrict(noMtime?.toLocaleLowerCase() === "true");
+    setNoMtime(noMtime?.toLocaleLowerCase() === "true");
   }, []);
 
   const updateAction = (selected: boolean) => {
-    setRestrict(selected);
+    setNoMtime(selected);
     localStorage.setItem("no-mtime", selected.toString());
   };
 
@@ -26,7 +26,7 @@ export default function NoMtime() {
         try to set this field and it will instead appear as the current download
         timestamp.
       </p>
-      <Switch checked={restrict} onValueChange={(e) => updateAction(e)} />
+      <Switch checked={noMtime} onValueChange={(e) => updateAction(e)} />
     </div>
   );
 }
