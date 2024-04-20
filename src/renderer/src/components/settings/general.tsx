@@ -4,6 +4,7 @@ import RestrictFileNames from "./components/restrict-filenames";
 import DisablePartFile from "./components/disable-part-file";
 import NoMtime from "./components/no-mtime";
 import Notifications from "./components/notifications";
+import RemoveOnFinish from "./components/remove-on-finish";
 
 const components = [
   {
@@ -25,6 +26,10 @@ const components = [
   {
     title: "Notification",
     component: Notifications,
+  },
+  {
+    title: "Remove on Finish",
+    component: RemoveOnFinish,
   },
 ];
 
