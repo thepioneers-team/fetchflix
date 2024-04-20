@@ -1,6 +1,6 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import { spawn } from "child_process";
-import { BrowserWindow, app } from "electron";
+import { BrowserWindow, app, Notification } from "electron";
 import fs from "fs";
 import template from "lodash.template";
 import { ulid } from "ulid";
@@ -283,6 +283,8 @@ export class Downloader {
     const self = this;
     self.status = "ACTIVE";
 
+    const isWindowFocused = BrowserWindow.getFocusedWindow() !== null;
+
     return new Promise(async (resolve) => {
       const args = await this.buildCommand();
 
@@ -308,6 +310,15 @@ export class Downloader {
         if (self.stats.percent === 100) {
           self.status = "FINISHED";
           self.done = true;
+
+          if (isWindowFocused === false) {
+            const notification = new Notification({
+              title: "Download Complete",
+              body: `Finished downloading ${self.url}`,
+            });
+
+            notification.show();
+          }
         }
 
         self.process?.kill();
