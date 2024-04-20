@@ -1,6 +1,7 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import OutputFilenameFormat from "./components/output-filename-format";
 import RestrictFileNames from "./components/restrict-filenames";
+import DisablePartFile from "./components/disable-part-file";
 
 const components = [
   {
@@ -12,6 +13,11 @@ const components = [
     title: "Restrict File Names",
 
     component: RestrictFileNames,
+  },
+  {
+    title: "Disable *.part file",
+
+    component: DisablePartFile,
   },
 ];
 
