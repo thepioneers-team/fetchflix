@@ -2,22 +2,24 @@ import { Accordion, AccordionItem } from "@nextui-org/react";
 import OutputFilenameFormat from "./components/output-filename-format";
 import RestrictFileNames from "./components/restrict-filenames";
 import DisablePartFile from "./components/disable-part-file";
+import NoMtime from "./components/no-mtime";
 
 const components = [
   {
     title: "Output Filename Format",
-
     component: OutputFilenameFormat,
   },
   {
     title: "Restrict File Names",
-
     component: RestrictFileNames,
   },
   {
     title: "Disable *.part file",
-
     component: DisablePartFile,
+  },
+  {
+    title: "No mtime",
+    component: NoMtime,
   },
 ];
 
