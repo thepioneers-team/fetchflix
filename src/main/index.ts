@@ -44,7 +44,9 @@ RPC.on("ready", () => {
   registerDiscordRPC();
 });
 
-RPC.login({ clientId: discordId });
+RPC.login({ clientId: discordId }).catch(() =>
+  console.log("Discord not found | RPC connection failed"),
+);
 
 export const downloads: { id: string; client: Downloader }[] = [];
 

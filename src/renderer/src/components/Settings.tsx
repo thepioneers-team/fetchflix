@@ -6,10 +6,11 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
+  Tab,
+  Tabs,
 } from "@nextui-org/react";
 import { IoSettingsOutline } from "react-icons/io5";
 
-import { Tab, Tabs } from "@nextui-org/react";
 import Advanced from "./settings/advanced";
 import General from "./settings/general";
 import Networking from "./settings/networking";

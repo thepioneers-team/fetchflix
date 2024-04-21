@@ -5,26 +5,6 @@ const components = [
     title: "Output Filename Format",
     component: "OutputFilenameFormat",
   },
-  // {
-  //   title: "Restrict File Names",
-  //   component: RestrictFileNames,
-  // },
-  // {
-  //   title: "Disable *.part file",
-  //   component: DisablePartFile,
-  // },
-  // {
-  //   title: "No mtime",
-  //   component: NoMtime,
-  // },
-  // {
-  //   title: "Notification",
-  //   component: Notifications,
-  // },
-  // {
-  //   title: "Remove on Finish",
-  //   component: RemoveOnFinish,
-  // },
 ];
 
 export default function General() {
