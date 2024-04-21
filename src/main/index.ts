@@ -10,8 +10,41 @@ import {
   updateSettings,
 } from "./functions";
 import { PlaylistHelper } from "./helpers/playlist";
-
+import discordRpc from "discord-rpc";
 import "./menu";
+
+const discordId = "1231671222631272570";
+const RPC = new discordRpc.Client({ transport: "ipc" });
+
+discordRpc.register(discordId);
+
+async function registerDiscordRPC() {
+  const { allowDiscordRPC } = await fetchSettings();
+
+  console.log(allowDiscordRPC);
+
+  if (!RPC || allowDiscordRPC === false) return;
+
+  RPC.setActivity({
+    details: "Downloading content made easy",
+    largeImageKey: "icon",
+    largeImageText: "Fetchflix",
+    startTimestamp: new Date(),
+    instance: false,
+    buttons: [
+      {
+        label: "Get Fetchflix",
+        url: "https://github.com/thepioneers-team/fetchflix/releases",
+      },
+    ],
+  });
+}
+
+RPC.on("ready", () => {
+  registerDiscordRPC();
+});
+
+RPC.login({ clientId: discordId });
 
 export const downloads: { id: string; client: Downloader }[] = [];
 
@@ -218,7 +251,7 @@ app.whenReady().then(() => {
   ipcMain.on("ping", () => console.log("pong"));
 
   createWindow();
-  ensureSettings(app.getPath("userData"), "settings.json");
+  ensureSettings();
 
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

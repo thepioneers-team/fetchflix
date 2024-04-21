@@ -1,27 +1,26 @@
-import {
-  BrowserWindow,
-  IncomingMessage,
-  app,
-  clipboard,
-  globalShortcut,
-  net,
-} from "electron";
+import { IncomingMessage, app, net } from "electron";
 import fs, { existsSync, readFileSync, writeFileSync } from "fs";
-import path, { join } from "path";
+import path from "path";
 import {
   darwinYTDL,
   defaultSettings,
   linuxYTDL,
   windowsYTDL,
 } from "./constants";
-import { ISettings } from "./validators/settings";
-import { is } from "@electron-toolkit/utils";
+import { ISettings, SettingsValidator } from "./validators/settings";
 
-export async function ensureSettings(fullPath: string, fileName: string) {
-  const file = path.join(fullPath, fileName);
+export async function ensureSettings() {
+  const file = path.join(app.getPath("userData"), "settings.json");
 
   if (!existsSync(file)) {
     writeFileSync(file, JSON.stringify(defaultSettings), "utf-8");
+  } else {
+    const settings = await fetchSettings();
+    const { success } = SettingsValidator.safeParse(settings);
+
+    if (!success) {
+      writeFileSync(file, JSON.stringify(defaultSettings), "utf-8");
+    }
   }
 }
 

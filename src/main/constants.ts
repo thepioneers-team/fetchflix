@@ -4,6 +4,7 @@ export const defaultSettings: ISettings = {
   outputPath: "<%= path %>",
   outputTemplate: "%(title)s.%(ext)s",
   turboMode: false,
+  allowDiscordRPC: true,
 };
 
 export const darwinYTDL =
