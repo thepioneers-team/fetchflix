@@ -1,36 +1,30 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
-import OutputFilenameFormat from "./components/output-filename-format";
-import RestrictFileNames from "./components/restrict-filenames";
-import DisablePartFile from "./components/disable-part-file";
-import NoMtime from "./components/no-mtime";
-import Notifications from "./components/notifications";
-import RemoveOnFinish from "./components/remove-on-finish";
 
 const components = [
   {
     title: "Output Filename Format",
-    component: OutputFilenameFormat,
+    component: "OutputFilenameFormat",
   },
-  {
-    title: "Restrict File Names",
-    component: RestrictFileNames,
-  },
-  {
-    title: "Disable *.part file",
-    component: DisablePartFile,
-  },
-  {
-    title: "No mtime",
-    component: NoMtime,
-  },
-  {
-    title: "Notification",
-    component: Notifications,
-  },
-  {
-    title: "Remove on Finish",
-    component: RemoveOnFinish,
-  },
+  // {
+  //   title: "Restrict File Names",
+  //   component: RestrictFileNames,
+  // },
+  // {
+  //   title: "Disable *.part file",
+  //   component: DisablePartFile,
+  // },
+  // {
+  //   title: "No mtime",
+  //   component: NoMtime,
+  // },
+  // {
+  //   title: "Notification",
+  //   component: Notifications,
+  // },
+  // {
+  //   title: "Remove on Finish",
+  //   component: RemoveOnFinish,
+  // },
 ];
 
 export default function General() {
