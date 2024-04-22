@@ -87,7 +87,7 @@ export const defaultSettings = {
   metadata: false,
   noMtime: false,
   notifications: true,
-  promptForPlaylist: false,
+  promptForPlaylist: true,
   removeOnFinish: false,
   restrictFileNames: false,
   subtitles: false,

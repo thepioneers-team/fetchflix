@@ -7,6 +7,7 @@ import {
   ensureSettings,
   fetchSettings,
   isError,
+  sendNotification,
   updateSettings,
 } from "./functions";
 import { PlaylistHelper } from "./helpers/playlist";
@@ -20,8 +21,6 @@ discordRpc.register(discordId);
 
 async function registerDiscordRPC() {
   const { allowDiscordRPC } = await fetchSettings();
-
-  console.log(allowDiscordRPC);
 
   if (!RPC || allowDiscordRPC === false) return;
 
@@ -220,17 +219,15 @@ function createWindow(): void {
 
   ipcMain.handle("start-download", async (_, args) => {
     const playlistManager = new PlaylistHelper({ url: args.url });
+    const { promptForPlaylist } = await fetchSettings();
 
     try {
       const isPlaylist = await playlistManager.validate();
 
-      console.log(isPlaylist);
-
-      if (isPlaylist && !args.ignorePlaylist) {
+      if (isPlaylist && !args.ignorePlaylist && promptForPlaylist) {
         playlistManager.fetchPlaylistDetails();
         return { playlist: true, loading: true };
       } else {
-        console.log(args.command);
         const client = new Downloader({
           cookies: args.cookies,
           credentials: args.credentials,

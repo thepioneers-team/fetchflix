@@ -1,10 +1,15 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import { spawn } from "child_process";
-import { BrowserWindow, app, Notification } from "electron";
+import { BrowserWindow, app } from "electron";
 import fs from "fs";
 import template from "lodash.template";
 import { ulid } from "ulid";
-import { ensureYTDL, fetchSettings } from "./functions";
+import {
+  ensureYTDL,
+  fetchSettings,
+  generateArgsFromSettings,
+  sendNotification,
+} from "./functions";
 
 // TODO: add an function to stream responses to the frontend using ipc
 
@@ -268,6 +273,10 @@ export class Downloader {
     if (password !== "") args.push("--password", password);
     if (this.command) args.unshift(...this.command.split(" "));
 
+    const settingsArgs = await generateArgsFromSettings();
+
+    args.push(...settingsArgs);
+
     args.push(this.url);
 
     console.log(args);
@@ -304,21 +313,18 @@ export class Downloader {
         self.sendStats();
       });
 
-      processor.on("exit", function (code) {
+      processor.on("exit", async function (code) {
         self.active = false;
 
         if (self.stats.percent === 100) {
           self.status = "FINISHED";
           self.done = true;
 
-          if (isWindowFocused === false) {
-            const notification = new Notification({
+          if (isWindowFocused === false)
+            await sendNotification({
               title: "Download Complete",
               body: `Finished downloading ${self.url}`,
             });
-
-            notification.show();
-          }
         }
 
         self.process?.kill();

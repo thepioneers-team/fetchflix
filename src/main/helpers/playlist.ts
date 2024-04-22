@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 import { BrowserWindow, app, Notification } from "electron";
 import { ulid } from "ulid";
 import fs from "fs";
-import { ensureDump } from "../functions";
+import { ensureDump, sendNotification } from "../functions";
 
 type PlaylistHelperArgs = {
   url: string;
@@ -64,7 +64,7 @@ export class PlaylistHelper {
 
   private isPlaylist(output: string): boolean {
     const jsonData = JSON.parse(output);
-    console.log("Parsed JSON Data:", jsonData); // Debug: Inspect parsed JSON data
+    // console.log("Parsed JSON Data:", jsonData); // Debug: Inspect parsed JSON data
     return !!jsonData._type && jsonData._type === "playlist"; // Check if _type is "playlist"
   }
 
@@ -116,14 +116,11 @@ export class PlaylistHelper {
           playlists,
         });
 
-        if (isWindowFocused === false) {
-          const notification = new Notification({
+        if (isWindowFocused === false)
+          await sendNotification({
             title: "Fetching completed",
             body: "Finished fetching playlist items",
           });
-
-          notification.show();
-        }
 
         // Optionally, clean up the temporary file after processing
         fs.unlinkSync(outputFile);

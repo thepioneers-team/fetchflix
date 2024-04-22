@@ -1,13 +1,15 @@
-import { IncomingMessage, app, net } from "electron";
+import { IncomingMessage, app, net, Notification, nativeImage } from "electron";
 import fs, { existsSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import {
   darwinYTDL,
   defaultSettings,
   linuxYTDL,
+  optionMappings,
   windowsYTDL,
 } from "./constants";
 import { ISettings, SettingsValidator } from "./validators/settings";
+import icon from "../../resources/icon.png?asset";
 
 export async function ensureSettings() {
   const file = path.join(app.getPath("userData"), "settings.json");
@@ -176,4 +178,42 @@ export function isErrorWithCause(error: any): error is ErrorWithCause {
 
 export function isError(error: any): error is Error {
   return error instanceof Error;
+}
+
+export async function generateArgsFromSettings() {
+  const args: string[] = [];
+
+  const settings = await fetchSettings();
+
+  Object.keys(settings).forEach((key) => {
+    const value = settings[key];
+    const option = optionMappings[key];
+    if (option && value) {
+      if (typeof value === "boolean") {
+        args.push(option);
+      } else {
+        args.push(`${option}="${value}"`);
+      }
+    }
+  });
+
+  return args;
+}
+
+export async function sendNotification({
+  title,
+  body,
+}: {
+  title: string;
+  body: string;
+}) {
+  const { notifications } = await fetchSettings();
+  if (notifications) {
+    const notif = new Notification({
+      title,
+      body,
+      icon: nativeImage.createFromDataURL(icon),
+    });
+    notif.show();
+  }
 }
