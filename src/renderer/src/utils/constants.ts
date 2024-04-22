@@ -74,5 +74,45 @@ export const FORMATS = [
   },
 ];
 
+// TODO: add a shared value so we don't have to update this in 2 places
+
+export const defaultSettings = {
+  buildChannel: "default",
+  ffmpegLocation: "",
+  allSubtitles: false,
+  annotations: false,
+  autoGenerateSubtitles: false,
+  description: false,
+  disablePartFiles: false,
+  metadata: false,
+  noMtime: false,
+  notifications: true,
+  promptForPlaylist: false,
+  removeOnFinish: false,
+  restrictFileNames: false,
+  subtitles: false,
+  thumbnail: false,
+  customUserAgent: false,
+  forceIPVersion: "no-force",
+  preferInsecure: false,
+  proxyIpAddress: "",
+  rateLimit: "",
+  refererUrl: "",
+  socketTimeout: "",
+  sourceIPAddress: "",
+  suppressHTTPCertificateValidation: false,
+  throttleRate: "",
+  unit: "byte",
+  audioQuality: 5,
+  covertArt: false,
+  customPostRenderingCommand: "",
+  embedChapters: false,
+  sponsorblock: false,
+  keepVideo: false,
+  splitChapters: false,
+  sponsorblockAPIUrl: "",
+  sponsorblockRemove: "",
+};
+
 export const linkRegex =
   /http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+/gm;

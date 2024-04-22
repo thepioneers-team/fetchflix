@@ -154,6 +154,55 @@ function createWindow(): void {
     };
   });
 
+  ipcMain.handle("change-ffmpeg-location", async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"],
+      filters: [
+        {
+          name: "FFmpeg Binary",
+          extensions: [".exe", ""],
+        },
+      ],
+    });
+
+    let relativePath = "";
+    let absolutePath = "";
+
+    if (result.canceled) {
+      const { ffmpegLocation } = await fetchSettings();
+
+      relativePath = path.relative(
+        app.getPath("home"),
+        ffmpegLocation || app.getPath("userData"),
+      );
+
+      absolutePath = ffmpegLocation || "";
+
+      return {
+        relativePath,
+        absolutePath,
+      };
+    }
+
+    relativePath = path.relative(app.getPath("home"), result.filePaths[0]);
+    absolutePath = result.filePaths[0];
+
+    return {
+      relativePath,
+      absolutePath,
+    };
+  });
+
+  ipcMain.handle("save-settings", async (_, settings) => {
+    try {
+      updateSettings(settings);
+      return "success";
+    } catch (error) {
+      console.error(error);
+      return "fail";
+    }
+  });
+
   ipcMain.handle("open-cookies", async () => {
     const result = await dialog.showOpenDialog({
       properties: ["openFile"],
@@ -169,7 +218,6 @@ function createWindow(): void {
     return result;
   });
 
-  // TODO: setup a way to figure out if its playlist or not first so you can show the user some dialog
   ipcMain.handle("start-download", async (_, args) => {
     const playlistManager = new PlaylistHelper({ url: args.url });
 

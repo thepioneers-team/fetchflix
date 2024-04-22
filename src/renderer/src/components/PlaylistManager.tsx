@@ -14,10 +14,6 @@ import { Playlist, PlaylistDetails } from "@renderer/types";
 import { useState } from "react";
 import { toast } from "sonner";
 
-// TODO: send command to localStorage if clicked on okay else cancel
-// TODO: make sure that if the url is detected as playlist a modal shows up with a spinner
-// TODO: check if there is an issue with the check state of the switch and make sure it actually adds it to the list
-
 export default function PlaylistManager() {
   const [entries, setEntries] = useState<Array<string>>([]);
   const [playlists, setPlaylists] = useState<Array<Playlist>>([]);

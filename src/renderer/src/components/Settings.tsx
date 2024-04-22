@@ -15,9 +15,19 @@ import Advanced from "./settings/advanced";
 import General from "./settings/general";
 import Networking from "./settings/networking";
 import PostProcessing from "./settings/post-processing";
+import useSettingsStore from "@renderer/stores/settings";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function Settings() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { saveSettings, error } = useSettingsStore();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const tabs = [
     {
@@ -88,7 +98,7 @@ export default function Settings() {
                 Settings
               </ModalHeader>
               <ModalBody className="overflow-y-scroll">
-                <Tabs color="primary" aria-label="Options">
+                <Tabs color="primary" variant="underlined" aria-label="Options">
                   {tabs.map((tab) => (
                     <Tab key={tab.title.toLowerCase()} title={tab.title}>
                       <tab.component />
@@ -100,7 +110,10 @@ export default function Settings() {
                 <Button
                   color="primary"
                   className="bg-primary/80 font-medium text-black"
-                  onPress={onClose}
+                  onPress={async () => {
+                    await saveSettings();
+                    onClose();
+                  }}
                 >
                   Looks good, save it!
                 </Button>
