@@ -6,10 +6,13 @@ export default function OutputFilenameFormat() {
   const { settings, updateSetting } = useSettingsStore();
 
   const [outputFilenameFormat, setOutputFilenameFormat] = useState<string>(
-    settings.outputFileName,
+    settings.outputTemplate,
   );
 
-  const handleChange = (value: string) => setOutputFilenameFormat(value);
+  const handleChange = (value: string) => {
+    setOutputFilenameFormat(value);
+    updateSetting("outputTemplate", value);
+  };
 
   const formatUpdate = (format: string) => {
     setOutputFilenameFormat(`${outputFilenameFormat}%(${format})s`);

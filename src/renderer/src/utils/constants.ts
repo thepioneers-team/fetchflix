@@ -85,6 +85,7 @@ export const defaultSettings = {
   description: false,
   disablePartFiles: false,
   metadata: false,
+  allowDiscordRPC: true,
   noMtime: false,
   notifications: true,
   promptForPlaylist: true,

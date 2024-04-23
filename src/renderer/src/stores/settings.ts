@@ -36,8 +36,12 @@ const useSettingsStore = create<SettingsState>()(
     {
       name: "settings",
       storage: createJSONStorage(() => localStorage),
-      merge: (persistedState: any = {}) => {
-        return { ...defaultSettings, ...persistedState };
+      merge: (persistedState: any = {}, currentState) => {
+        // Ensure that we properly merge defaults with the persisted state
+        return {
+          ...currentState,
+          settings: { ...defaultSettings, ...persistedState.settings },
+        };
       },
     },
   ),
