@@ -1,3 +1,4 @@
+import { defaultSettings } from "@renderer/utils/constants";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -12,7 +13,7 @@ const useSettingsStore = create<SettingsState>()(
   persist(
     (set, get) => ({
       error: null,
-      settings: {},
+      settings: defaultSettings,
       updateSetting: (key, value) => {
         const newSettings = { ...get()?.settings, [key]: value };
         set({ settings: newSettings });
@@ -26,15 +27,18 @@ const useSettingsStore = create<SettingsState>()(
           if (response !== "success") {
             throw new Error("Backend update failed");
           }
-          set({ error: null }); // Clear any previous error on successful save
+          set({ error: null });
         } catch (error) {
-          set({ error: error as string }); // Set error state if the save fails
+          set({ error: error as string });
         }
       },
     }),
     {
-      name: "settings", // name of the item in the storage (must be unique)
-      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      name: "settings",
+      storage: createJSONStorage(() => localStorage),
+      merge: (persistedState: any = {}, currentState: any) => {
+        return { ...defaultSettings, ...persistedState };
+      },
     },
   ),
 );

@@ -321,7 +321,7 @@ export class Downloader {
       });
 
       processor.on("exit", async function (code) {
-        self.active = false;
+        // self.active = false;
 
         if (self.stats.percent === 100) {
           self.status = "FINISHED";
