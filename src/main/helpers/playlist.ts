@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
-import { BrowserWindow, app, Notification } from "electron";
-import { ulid } from "ulid";
+import { BrowserWindow, app } from "electron";
 import fs from "fs";
+import { ulid } from "ulid";
 import { ensureDump, sendNotification } from "../functions";
 
 type PlaylistHelperArgs = {
