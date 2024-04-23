@@ -1,4 +1,4 @@
-# Code of Conduct for [Project Name]
+# Code of Conduct for Fetchflix
 
 ## Our Pledge
 
