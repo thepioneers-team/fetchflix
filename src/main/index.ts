@@ -188,6 +188,9 @@ function createWindow(): void {
     if (result.canceled) {
       const { ffmpegLocation } = await fetchSettings();
 
+      if (ffmpegLocation && ffmpegLocation === "")
+        return { relativePath: "", absolutePath: "" };
+
       relativePath = path.relative(
         app.getPath("home"),
         ffmpegLocation || app.getPath("userData"),
@@ -203,6 +206,8 @@ function createWindow(): void {
 
     relativePath = path.relative(app.getPath("home"), result.filePaths[0]);
     absolutePath = result.filePaths[0];
+
+    console.log("Not canceled, results are returned");
 
     return {
       relativePath,
