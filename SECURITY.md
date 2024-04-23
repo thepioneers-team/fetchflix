@@ -1,4 +1,4 @@
-# Spacedrive Security Policy
+# Fetchflix Security Policy
 
 ## Reporting a vulnerability
 
