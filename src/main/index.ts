@@ -14,6 +14,7 @@ import { PlaylistHelper } from "./helpers/playlist";
 import { autoUpdater } from "electron-updater";
 
 import "./menu";
+import { eventManager } from "./helpers/events";
 
 const discordId = "1231671222631272570";
 const RPC = new discordRpc.Client({ transport: "ipc" });
@@ -89,8 +90,15 @@ function createWindow(): void {
     return { action: "deny" };
   });
 
-  autoUpdater.on("update-available", () => {
-    mainWindow?.webContents.send("update_available");
+  // MANUALLY CHECK FOR UPDATES
+  eventManager.on("check-for-update", () => {
+    autoUpdater.checkForUpdates();
+    autoUpdater.on("update-available", () => {
+      mainWindow.webContents.send("update_available");
+    });
+    autoUpdater.on("update-not-available", () => {
+      mainWindow.webContents.send("update_not_available");
+    });
   });
 
   autoUpdater.on("update-downloaded", () => {

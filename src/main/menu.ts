@@ -5,6 +5,7 @@ import {
   app,
   shell,
 } from "electron";
+import { eventManager } from "./helpers/events";
 
 const isMac = process.platform === "darwin";
 
@@ -58,6 +59,17 @@ const template: (MenuItemConstructorOptions | MenuItem)[] = [
           { label: "Start Speaking", role: "startSpeaking" },
           { label: "Stop Speaking", role: "stopSpeaking" },
         ],
+      },
+    ],
+  },
+  {
+    label: "Tools",
+    submenu: [
+      {
+        label: "Check for update",
+        click: () => {
+          eventManager.emit("check-for-update");
+        },
       },
     ],
   },
