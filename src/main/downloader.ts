@@ -56,7 +56,8 @@ export class Downloader {
   private paused: boolean = false;
   private canceled: boolean = false;
   private done: boolean = false;
-  private active: boolean = false;
+
+  // private active: boolean = false;
   private ytdl_path: string = "";
   private process: ChildProcessWithoutNullStreams | undefined;
 
@@ -126,7 +127,7 @@ export class Downloader {
       console.log("is not paused");
       this.sendStats();
 
-      this.active = true;
+      // this.active = true;
       this.done = false;
 
       const ytdlPath = await ensureYTDL(); // change to this.ensureYTDL() if needed
@@ -464,7 +465,7 @@ export class Downloader {
 
     this.error = true;
     this.errorMsg = "Cancelled By User";
-    this.active = false;
+    // this.active = false;
 
     this.done = true;
     this.canceled = true;
@@ -480,7 +481,7 @@ export class Downloader {
     this.process?.kill();
 
     this.paused = true;
-    this.active = true;
+    // this.active = true;
 
     this.status = "PAUSED";
 
@@ -492,7 +493,7 @@ export class Downloader {
     this.sendLogs("[Download Resumed By User]");
 
     this.paused = false;
-    this.active = true;
+    // this.active = true;
     this.canceled = false;
 
     this.status = "ACTIVE";
@@ -512,7 +513,7 @@ export class Downloader {
       duration: "0",
     };
 
-    this.active = false;
+    // this.active = false;
     this.done = false;
     this.error = false;
     this.errorMsg = undefined;
