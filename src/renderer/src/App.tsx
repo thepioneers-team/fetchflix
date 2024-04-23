@@ -14,37 +14,34 @@ function App(): JSX.Element {
   const [version, setVersion] = useState<string>("");
   const { event, resetEvent } = useDownload();
 
+  window.electron.ipcRenderer.on("download-stats", (_, args: DownloadStats) => {
+    const { download_stats, id, video_info } = args;
+
+    const index = downloads.findIndex((x) => x.id === args.id);
+
+    const statistics = {
+      eta: download_stats.eta,
+      id,
+      progress: download_stats.percent,
+      rate: download_stats.rate,
+      size: download_stats.bytes,
+      status: video_info.status,
+      thumbnail: video_info.thumbnail,
+      title: video_info.title,
+      url: video_info.url,
+    };
+
+    if (index !== -1) {
+      let array = [...downloads];
+      array[index] = statistics;
+
+      setDownloads(array);
+    } else {
+      setDownloads([statistics, ...downloads]);
+    }
+  });
+
   useEffect(() => {
-    window.electron.ipcRenderer.on(
-      "download-stats",
-      (_, args: DownloadStats) => {
-        const { download_stats, id, video_info } = args;
-
-        const index = downloads.findIndex((x) => x.id === args.id);
-
-        const statistics = {
-          eta: download_stats.eta,
-          id,
-          progress: download_stats.percent,
-          rate: download_stats.rate,
-          size: download_stats.bytes,
-          status: video_info.status,
-          thumbnail: video_info.thumbnail,
-          title: video_info.title,
-          url: video_info.url,
-        };
-
-        if (index !== -1) {
-          let array = [...downloads];
-          array[index] = statistics;
-
-          setDownloads(array);
-        } else {
-          setDownloads([statistics, ...downloads]);
-        }
-      },
-    );
-
     const getVersion = async () => {
       const version = await window.electron.ipcRenderer.invoke("get-version");
       setVersion(version);

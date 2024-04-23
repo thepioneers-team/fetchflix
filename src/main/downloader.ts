@@ -255,9 +255,14 @@ export class Downloader {
   private async buildCommand() {
     let { outputPath, outputTemplate } = await fetchSettings();
 
-    if (outputPath?.includes("<%= path %>"))
-      outputPath = template({ path: app.getPath("downloads") });
+    console.log(outputPath);
 
+    if (outputPath && outputPath.indexOf("<%= path %>") !== -1) {
+      const compiledTemplate = template(outputPath);
+      outputPath = compiledTemplate({ path: app.getPath("downloads") });
+    }
+
+    console.log(outputPath);
     this.outputPath = outputPath!;
 
     const args = [
@@ -271,7 +276,8 @@ export class Downloader {
 
     if (username !== "") args.push("--username", username);
     if (password !== "") args.push("--password", password);
-    if (this.command) args.unshift(...this.command.split(" "));
+    if (this.command && this.command !== "")
+      args.unshift(...this.command.split(" "));
 
     const settingsArgs = await generateArgsFromSettings();
 
