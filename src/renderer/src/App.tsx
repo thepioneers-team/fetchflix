@@ -11,39 +11,64 @@ import { Download } from "./types/DownloadTable";
 
 function App(): JSX.Element {
   const [downloads, setDownloads] = useState<Download[]>([]);
+  const [version, setVersion] = useState<string>("");
   const { event, resetEvent } = useDownload();
-  // const ipcHandle = (): void => window.electron.ipcRenderer.send("ping");
-
-  window.electron.ipcRenderer.on("download-stats", (_, args: DownloadStats) => {
-    const { download_stats, id, video_info } = args;
-
-    const index = downloads.findIndex((x) => x.id === args.id);
-
-    const statistics = {
-      eta: download_stats.eta,
-      id,
-      progress: download_stats.percent,
-      rate: download_stats.rate,
-      size: download_stats.bytes,
-      status: video_info.status,
-      thumbnail: video_info.thumbnail,
-      title: video_info.title,
-      url: video_info.url,
-    };
-
-    if (index !== -1) {
-      let array = [...downloads];
-      array[index] = statistics;
-
-      setDownloads(array);
-    } else {
-      setDownloads([statistics, ...downloads]);
-    }
-  });
 
   useEffect(() => {
-    console.log(downloads);
-  }, [downloads]);
+    window.electron.ipcRenderer.on(
+      "download-stats",
+      (_, args: DownloadStats) => {
+        const { download_stats, id, video_info } = args;
+
+        const index = downloads.findIndex((x) => x.id === args.id);
+
+        const statistics = {
+          eta: download_stats.eta,
+          id,
+          progress: download_stats.percent,
+          rate: download_stats.rate,
+          size: download_stats.bytes,
+          status: video_info.status,
+          thumbnail: video_info.thumbnail,
+          title: video_info.title,
+          url: video_info.url,
+        };
+
+        if (index !== -1) {
+          let array = [...downloads];
+          array[index] = statistics;
+
+          setDownloads(array);
+        } else {
+          setDownloads([statistics, ...downloads]);
+        }
+      },
+    );
+
+    const getVersion = async () => {
+      const version = await window.electron.ipcRenderer.invoke("get-version");
+      setVersion(version);
+    };
+
+    getVersion();
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners("download-stats");
+    };
+  }, []);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("update_downloaded", () => {
+      const confirm = window.confirm("Update downloaded. Restart to apply?");
+      if (confirm) {
+        window.electron.ipcRenderer.send("restart_app");
+      }
+    });
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners("update_downloaded");
+    };
+  }, []);
 
   useEffect(() => {
     if (event) {
@@ -66,6 +91,9 @@ function App(): JSX.Element {
       <LogViewer />
       <PlaylistManager />
       <Toaster position="bottom-right" />
+      <div className="fixed bottom-5 left-5 text-sm text-zinc-400">
+        v{version}
+      </div>
     </>
   );
 }

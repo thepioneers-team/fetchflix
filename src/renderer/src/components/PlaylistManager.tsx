@@ -33,17 +33,6 @@ export default function PlaylistManager() {
 
   window.electron.ipcRenderer.on("playlist-details", handlePlaylistDetails);
 
-  // useEffect(() => {
-  //   if (loading) {
-  //     setOpened(true);
-  //   }
-
-  //   return () => {
-  //     setEntries([]);
-  //     window.electron.ipcRenderer.removeAllListeners("playlist-details");
-  //   };
-  // }, [loading]);
-
   const handleOpenChange = (e: boolean) => {
     setOpened(e);
     if (!e) {
@@ -52,7 +41,6 @@ export default function PlaylistManager() {
   };
 
   const handleDownload = (onClose: () => void) => {
-    alert("i was pressed");
     setEvent({
       type: "DOWNLOAD_PLAYLIST",
       payload: {

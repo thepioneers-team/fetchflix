@@ -52,7 +52,7 @@ export class PlaylistHelper {
 
       ytdl.on("close", (code) => {
         console.log("YT-DLP finished with code:", code); // Debug: See the exit code
-        console.log("YT-DLP output:", output); // Debug: Inspect the raw output
+        // console.log("YT-DLP output:", output); // Debug: Inspect the raw output
         if (code !== 0) {
           reject(new Error(`yt-dlp process exited with code ${code}`));
         } else {

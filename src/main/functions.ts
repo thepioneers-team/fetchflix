@@ -188,14 +188,27 @@ export async function generateArgsFromSettings() {
   Object.keys(settings).forEach((key) => {
     const value = settings[key];
     const option = optionMappings[key];
-    if (option && value) {
+    if (option) {
       if (typeof value === "boolean") {
-        args.push(option);
-      } else {
-        args.push(`${option}="${value}"`);
+        // Only add the option if the boolean is true
+        if (value) {
+          args.push(option);
+        }
+      } else if (key === "forceIPVersion") {
+        // Special handling for 'forceIPVersion'
+        if (value === "ipv4" || value === "ipv6") {
+          args.push(`${option}${value.slice(3)}`); // Adds --force-ipv4 or --force-ipv6
+        }
+      } else if (value !== "" && value !== "no-force") {
+        // For all non-boolean values that are not empty or default 'no-force'
+        args.push(
+          `${option}=${typeof value === "string" ? `"${value}"` : value}`,
+        );
       }
     }
   });
+
+  console.log(args);
 
   return args;
 }

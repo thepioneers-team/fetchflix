@@ -1,4 +1,5 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import discordRpc from "discord-rpc";
 import { BrowserWindow, app, dialog, ipcMain, shell } from "electron";
 import path, { join } from "path";
 import icon from "../../resources/icon.png?asset";
@@ -7,11 +8,11 @@ import {
   ensureSettings,
   fetchSettings,
   isError,
-  sendNotification,
   updateSettings,
 } from "./functions";
 import { PlaylistHelper } from "./helpers/playlist";
-import discordRpc from "discord-rpc";
+import { autoUpdater } from "electron-updater";
+
 import "./menu";
 
 const discordId = "1231671222631272570";
@@ -80,11 +81,24 @@ function createWindow(): void {
 
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
+    autoUpdater.checkForUpdatesAndNotify();
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: "deny" };
+  });
+
+  autoUpdater.on("update-available", () => {
+    mainWindow?.webContents.send("update_available");
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    mainWindow?.webContents.send("update_downloaded");
+  });
+
+  ipcMain.handle("restart_app", () => {
+    autoUpdater.quitAndInstall();
   });
 
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
@@ -108,6 +122,10 @@ function createWindow(): void {
 
   ipcMain.handle("open-external-url", (_, url) => {
     shell.openExternal(url);
+  });
+
+  ipcMain.handle("get-version", () => {
+    return autoUpdater.currentVersion.raw;
   });
 
   // ipcMain.handle("turbo-mode-update", async (_, arg) => {
@@ -255,14 +273,6 @@ function createWindow(): void {
       downloads[index].client.cancel();
     }
   });
-
-  // ipcMain.handle("delete-file", (_, args) => {
-  //   const index = downloads.findIndex((x) => x.id === args);
-  //   if (index !== -1) {
-  //     const client = downloads[index].client;
-  //     unlinkSync(path.join(client.outputPath, client.title));
-  //   }
-  // });
 
   ipcMain.handle("resume-install", (_, args) => {
     const index = downloads.findIndex((x) => x.id === args);

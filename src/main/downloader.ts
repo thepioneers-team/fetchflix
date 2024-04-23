@@ -285,7 +285,7 @@ export class Downloader {
   }
 
   private isError = (data: string) => {
-    return data.indexOf("ERROR: ") !== -1;
+    return data.indexOf("ERROR: ") !== -1 || data.indexOf("Error: ") !== -1;
   };
 
   private downloadVideo() {
@@ -414,6 +414,7 @@ export class Downloader {
       if (data.toLowerCase().indexOf("ffmpeg not found") !== -1) {
         this.ffmpegError = true;
       }
+      this.sendLogs(data);
       return;
     }
 

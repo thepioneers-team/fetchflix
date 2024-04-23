@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import {
   useCookies,
   useCredentials,
@@ -8,7 +8,6 @@ import { useEventStore } from "@renderer/stores/events";
 import { usePlaylistStore } from "@renderer/stores/playlist";
 import { linkRegex } from "@renderer/utils/constants";
 import { useEffect, useRef, useState } from "react";
-import { HiLightningBolt, HiOutlineLightningBolt } from "react-icons/hi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { toast } from "sonner";
 import Credentials from "./Credentials";
@@ -18,7 +17,7 @@ import { VscLoading } from "react-icons/vsc";
 
 const LinkInput = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [turboMode, setTurboMode] = useState(false);
+
   const [link, setLink] = useState("");
   const [loading, setLoading] = useState(false); // State to handle loading feedback
   const { credentials } = useCredentials();

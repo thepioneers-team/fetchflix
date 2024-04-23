@@ -18,7 +18,7 @@ dependencies:
     specifier: ^4.0.1
     version: 4.0.1
   electron-updater:
-    specifier: ^6.1.7
+    specifier: ^6.1.8
     version: 6.1.8
   framer-motion:
     specifier: ^11.0.3

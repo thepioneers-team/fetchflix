@@ -18,10 +18,7 @@ export default function LogViewer() {
     window.electron.ipcRenderer.on("download-logs", handleDownloadLogs);
 
     return () => {
-      window.electron.ipcRenderer.removeListener(
-        "download-logs",
-        handleDownloadLogs,
-      );
+      window.electron.ipcRenderer.removeAllListeners("download-logs");
     };
   }, [data?.id]); // Dependency on `data.id` if it's expected to change over time
 
