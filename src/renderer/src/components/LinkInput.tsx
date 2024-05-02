@@ -54,7 +54,6 @@ const LinkInput = () => {
       const { type } = globalEvent;
       if (type === "DOWNLOAD_PLAYLIST") {
         const payload = globalEvent.payload as { items: Array<string> };
-        console.log(globalEvent);
         handleDownload(`--playlist-items ${payload.items.join(",")}`, true);
         reset();
       }
@@ -62,9 +61,6 @@ const LinkInput = () => {
   }, [globalEvent]);
 
   const handleDownload = async (command?: string, ignorePlaylist = false) => {
-    console.log(credentials, cookiePath, cookies);
-    console.log(link);
-
     // Resetting lastIndex for a global regex
     linkRegex.lastIndex = 0; // Add this line if the regex is global
 
@@ -80,8 +76,6 @@ const LinkInput = () => {
         command,
         ignorePlaylist,
       });
-
-      console.log(data);
 
       if (data.playlist && data.loading) {
         setLoading(false);
@@ -103,7 +97,6 @@ const LinkInput = () => {
         setLoading(false);
       }
     } else {
-      console.log("Failed regex:", linkRegex.test(link)); // Additional log for debugging
       toast.error("Invalid URL", {
         description: "The URL entered does not match the expected format.",
       });

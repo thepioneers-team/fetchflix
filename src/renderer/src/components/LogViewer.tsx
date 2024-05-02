@@ -30,7 +30,6 @@ export default function LogViewer() {
           "get-logs",
           data.id,
         );
-        console.log(logHistory);
         setLogs((prevLogs) => [...logHistory, ...prevLogs]);
       } catch (error) {
         console.error("Failed to fetch logs:", error);

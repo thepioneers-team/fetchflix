@@ -5,6 +5,7 @@ import fs from "fs";
 import template from "lodash.template";
 import { ulid } from "ulid";
 import {
+  chmodValidate,
   ensureYTDL,
   fetchSettings,
   generateArgsFromSettings,
@@ -267,6 +268,7 @@ export class Downloader {
     this.outputPath = outputPath!;
 
     const args = [
+      "--ignore-errors",
       "--output",
       `${outputPath}/${outputTemplate}`,
       ARG_TEMPLATE,
@@ -285,8 +287,6 @@ export class Downloader {
     args.push(...settingsArgs);
 
     args.push(this.url);
-
-    console.log(args);
 
     return args;
   }
@@ -344,6 +344,13 @@ export class Downloader {
       // Capture stderr data for error handling
       processor.stderr.on("data", (data) => {
         console.error(`Error: ${data}`);
+
+        if (data.includes("ffmpeg")) {
+          this.sendLogs(
+            `To install '${this.url}' please install ffmpeg (globally)`,
+          );
+        }
+
         this.sendLogs(`Failed to download video for: ${this.url}`);
       });
 
@@ -361,7 +368,7 @@ export class Downloader {
       processor.on("error", async function (err) {
         console.log(err.stack?.includes("EACCES"));
         if (err.stack?.includes("EACCES")) {
-          await self.chmodValidate();
+          await chmodValidate(self.ytdl_path);
           self.start();
           return;
         }
@@ -372,23 +379,6 @@ export class Downloader {
         //   `Please check the log for more details. Click View Console in the menu for this download.`,
         // );
         // ! CANNOT REJECT AS IT WILL THROW NOTIFICATION ERROR
-      });
-    });
-  }
-
-  private chmodValidate(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      fs.chmod(this.ytdl_path, 0o755, (err) => {
-        if (err) {
-          console.error(
-            `Failed to change permissions for ${this.ytdl_path}`,
-            err,
-          );
-          reject(`Failed to change permissions: ${err.message}`);
-        } else {
-          console.log(`Permissions changed successfully for ${this.ytdl_path}`);
-          resolve();
-        }
       });
     });
   }

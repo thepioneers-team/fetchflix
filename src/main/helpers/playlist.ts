@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 import { BrowserWindow, app } from "electron";
 import fs from "fs";
 import { ulid } from "ulid";
-import { ensureDump, sendNotification } from "../functions";
+import { chmodValidate, ensureDump, sendNotification } from "../functions";
 
 type PlaylistHelperArgs = {
   url: string;
@@ -34,9 +34,10 @@ export class PlaylistHelper {
   private async checkIfPlaylist(fullPath: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const ytdl = spawn(fullPath, [
-        "--dump-single-json", // Change to dump-single-json to ensure complete metadata is fetched
+        "--dump-single-json",
         "--playlist-end",
         "1",
+        "--ignore-errors", // Adding ignore errors to continue processing
         this.url,
       ]);
       let output = "";
@@ -46,13 +47,23 @@ export class PlaylistHelper {
       });
 
       ytdl.stderr.on("data", (data) => {
-        console.error(`stderr: ${data}`);
-        reject(new Error(`stderr: ${data}`));
+        const message = data.toString();
+        console.error(`stderr: ${message}`);
+        if (!message.includes("Skipping player responses")) {
+          reject(new Error(`stderr: ${message}`));
+        }
+      });
+
+      ytdl.on("error", async function (err) {
+        console.log(err.stack?.includes("EACCES"));
+        if (err.stack?.includes("EACCES")) {
+          await chmodValidate(fullPath);
+          return;
+        }
       });
 
       ytdl.on("close", (code) => {
-        console.log("YT-DLP finished with code:", code); // Debug: See the exit code
-        // console.log("YT-DLP output:", output); // Debug: Inspect the raw output
+        console.log("YT-DLP finished with code:", code);
         if (code !== 0) {
           reject(new Error(`yt-dlp process exited with code ${code}`));
         } else {

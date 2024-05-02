@@ -22,9 +22,7 @@ export default function PlaylistManager() {
   const { setEvent } = useEventStore();
 
   const handlePlaylistDetails = (_, args: PlaylistDetails) => {
-    console.log(args);
     toast.dismiss();
-    console.log(`IsPlaylistLoading: ${loading}`);
     setOpened(true);
 
     setPlaylists(args.playlists);

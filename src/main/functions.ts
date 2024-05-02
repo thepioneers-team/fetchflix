@@ -10,6 +10,7 @@ import {
 } from "./constants";
 import { ISettings, SettingsValidator } from "./validators/settings";
 import icon from "../../resources/icon.png?asset";
+import { spawn } from "child_process";
 
 export async function ensureSettings() {
   const file = path.join(app.getPath("userData"), "settings.json");
@@ -68,6 +69,49 @@ export function updateSettings(updates: Partial<ISettings>): Promise<void> {
   });
 }
 
+function getLatestVersion(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const request = net.request(
+      "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest",
+    );
+    request.setHeader("User-Agent", "Electron app");
+    request.on("response", (response) => {
+      let data = "";
+      response.on("data", (chunk) => {
+        data += chunk;
+      });
+      response.on("end", () => {
+        const release = JSON.parse(data);
+        resolve(release.tag_name);
+      });
+    });
+    request.on("error", (error) => {
+      reject(error);
+    });
+    request.end();
+  });
+}
+
+function getLocalVersion(fullPath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const process = spawn(fullPath, ["--version"]);
+    let stdout = "";
+    process.stdout.on("data", (data) => {
+      stdout += data;
+    });
+    process.stderr.on("data", (data) => {
+      console.error(`stderr: ${data}`);
+    });
+    process.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(`Process exited with code ${code}`));
+      } else {
+        resolve(stdout.trim());
+      }
+    });
+  });
+}
+
 export function ensureYTDL(): Promise<string> {
   const binaryName = `yt-dlp${process.platform === "win32" ? ".exe" : ""}`;
   const fullPath = `${app.getPath("userData")}/${binaryName}`;
@@ -77,12 +121,34 @@ export function ensureYTDL(): Promise<string> {
   return new Promise((resolve, reject) => {
     if (fs.existsSync(fullPath)) {
       console.log("YTDL already exists");
-      resolve(fullPath);
+      getLocalVersion(fullPath)
+        .then((localVersion) => {
+          getLatestVersion()
+            .then((latestVersion) => {
+              if (localVersion === latestVersion) {
+                console.log("YTDL is up to date");
+                resolve(fullPath);
+              } else {
+                console.log("YTDL is outdated, updating...");
+                downloadYTDLFromGithub(fullPath)
+                  .then(() => resolve(fullPath))
+                  .catch((error) => {
+                    console.error("Failed to download YTDL:", error);
+                    reject(error);
+                  });
+              }
+            })
+            .catch((error) => {
+              console.error("Failed to fetch latest YTDL version:", error);
+              reject(error);
+            });
+        })
+        .catch((error) => {
+          console.error("Failed to check local YTDL version:", error);
+          reject(error);
+        });
     } else {
       console.log("YTDL Binary was not found!");
-      // this.sendLogs(
-      //   "[ WARNING ] yt-dlp binary file was not found... Installing.",
-      // );
       downloadYTDLFromGithub(fullPath)
         .then(() => resolve(fullPath))
         .catch((error) => {
@@ -90,6 +156,20 @@ export function ensureYTDL(): Promise<string> {
           reject(error);
         });
     }
+  });
+}
+
+export function chmodValidate(path: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    fs.chmod(path, 0o755, (err) => {
+      if (err) {
+        console.error(`Failed to change permissions for ${path}`, err);
+        reject(`Failed to change permissions: ${err.message}`);
+      } else {
+        console.log(`Permissions changed successfully for ${path}`);
+        resolve();
+      }
+    });
   });
 }
 
@@ -207,8 +287,6 @@ export async function generateArgsFromSettings() {
       }
     }
   });
-
-  console.log(args);
 
   return args;
 }

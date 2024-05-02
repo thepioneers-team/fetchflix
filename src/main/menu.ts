@@ -1,8 +1,11 @@
+import { spawn } from "child_process";
 import {
+  BrowserWindow,
   Menu,
   MenuItem,
   MenuItemConstructorOptions,
   app,
+  dialog,
   shell,
 } from "electron";
 import { eventManager } from "./helpers/events";
@@ -69,6 +72,35 @@ const template: (MenuItemConstructorOptions | MenuItem)[] = [
         label: "Check for update",
         click: () => {
           eventManager.emit("check-for-update");
+        },
+      },
+      {
+        label: "Clear yt-dlp cache",
+        click: async () => {
+          const binaryName = `yt-dlp${process.platform === "win32" ? ".exe" : ""}`;
+          const fullPath = `${app.getPath("userData")}/${binaryName}`;
+
+          const win = BrowserWindow.getAllWindows()[0];
+
+          const processor = spawn(fullPath, ["--rm-cache-dir"]);
+          let stdout = "";
+          processor.stdout.on("data", (data) => {
+            stdout += data;
+          });
+          processor.stderr.on("data", (data) => {
+            console.error(`stderr: ${data}`);
+          });
+          processor.on("close", (code) => {
+            if (code !== 0) {
+              dialog.showMessageBox(win, {
+                message: `Process exited with code ${code}`,
+              });
+            } else {
+              dialog.showMessageBox(win, {
+                message: stdout.trim(),
+              });
+            }
+          });
         },
       },
     ],

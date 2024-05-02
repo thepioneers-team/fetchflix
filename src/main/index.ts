@@ -6,6 +6,7 @@ import icon from "../../resources/icon.png?asset";
 import { Downloader } from "./downloader";
 import {
   ensureSettings,
+  ensureYTDL,
   fetchSettings,
   isError,
   updateSettings,
@@ -265,7 +266,7 @@ function createWindow(): void {
           url: args.url,
           format: args.format || "BEST",
           command: args.command,
-          isPlaylist,
+          isPlaylist: false,
         });
 
         client.start();
@@ -311,7 +312,7 @@ function createWindow(): void {
   });
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId("com.electron");
 
   app.on("browser-window-created", (_, window) => {
@@ -322,6 +323,7 @@ app.whenReady().then(() => {
 
   createWindow();
   ensureSettings();
+  await ensureYTDL();
 
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

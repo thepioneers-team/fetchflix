@@ -43,8 +43,6 @@ export default function DownloadDropdownOptions({ item }: Props) {
     await window.api.app.openExternalURL(href);
   };
 
-  console.log(item.status);
-
   const renderActionButton = () => {
     let button: ReactNode;
 
