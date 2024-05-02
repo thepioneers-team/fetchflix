@@ -32,7 +32,7 @@ function App(): JSX.Element {
     };
 
     if (index !== -1) {
-      let array = [...downloads];
+      const array = [...downloads];
       array[index] = statistics;
 
       setDownloads(array);

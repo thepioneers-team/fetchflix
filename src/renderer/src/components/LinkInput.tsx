@@ -21,7 +21,7 @@ const LinkInput = () => {
   const [link, setLink] = useState("");
   const [loading, setLoading] = useState(false); // State to handle loading feedback
   const { credentials } = useCredentials();
-  const { cookiePath, cookies } = useCookies();
+  const { cookies } = useCookies();
   const { format } = useFormat();
   const { setLoading: setPlaylistLoading } = usePlaylistStore();
   const { event: globalEvent, reset } = useEventStore();

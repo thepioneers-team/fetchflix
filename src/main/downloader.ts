@@ -1,7 +1,6 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import { spawn } from "child_process";
 import { BrowserWindow, app } from "electron";
-import fs from "fs";
 import template from "lodash.template";
 import { ulid } from "ulid";
 import {
@@ -425,7 +424,7 @@ export class Downloader {
   }
 
   private sendStats() {
-    let win = BrowserWindow.getAllWindows()[0];
+    const win = BrowserWindow.getAllWindows()[0];
 
     win?.webContents.send("download-stats", {
       id: this.id,
@@ -440,7 +439,7 @@ export class Downloader {
   }
 
   private sendLogs(log: string) {
-    let win = BrowserWindow.getAllWindows()[0];
+    const win = BrowserWindow.getAllWindows()[0];
 
     this.logs.push(log);
 

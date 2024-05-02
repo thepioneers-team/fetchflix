@@ -1,7 +1,7 @@
 import { HTMLAttributes } from "react";
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
-  href: String;
+  href: string;
 }
 
 const ExternalURL = ({ children, onClick, href, ...props }: Props) => {

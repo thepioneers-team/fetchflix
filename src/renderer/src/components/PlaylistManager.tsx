@@ -18,7 +18,7 @@ export default function PlaylistManager() {
   const [entries, setEntries] = useState<Array<string>>([]);
   const [playlists, setPlaylists] = useState<Array<Playlist>>([]);
   const [opened, setOpened] = useState<boolean>(false);
-  const { loading, setLoading } = usePlaylistStore();
+  const { setLoading } = usePlaylistStore();
   const { setEvent } = useEventStore();
 
   const handlePlaylistDetails = (_, args: PlaylistDetails) => {
